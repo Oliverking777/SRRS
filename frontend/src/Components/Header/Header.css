@@ -1,0 +1,140 @@
+.header{
+    
+    justify-content: center;
+    display: flex;
+    height: 500px;
+    
+}
+.componets{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 20px 8vw;
+    gap: 20px;
+    
+}
+.header_titles{
+    
+    display: flex;
+    max-height: fit-content;
+    width: fit-content;
+    align-items: center;  
+    
+    
+}
+.header_titles img{
+    height: 30px;
+    
+    
+}
+.header_titles p{
+    color: #076ff5 ;
+    font-size: 50px;
+    font-weight: bold;
+    margin-left: 10px;
+    
+
+}
+.des{
+    padding-left: 100px;
+    padding-top: 10px;
+    padding-right: 100px;
+    max-width: 800px; /* Adjust this value based on your layout */
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-top: -60px;
+    padding: 0;
+    height: fit-content;
+    
+}
+.des span{
+    font-size: 20px;
+    margin-top: 10px;
+}
+.headerbuttons{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+    gap: 30px;
+}
+.get_started{
+    display: flex;
+    background-color: #076ff5;
+    color: #e7eeee;
+    font-weight: bold;
+    font-size: 19px;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.get_started:hover{
+    background-color: #7186fa ;
+}
+.get_started img{
+    height: 20px;
+    margin-left: 10px;
+}
+.sign{
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #fafcfe ;
+    border: 0.3px solid #333434 ;
+    cursor: pointer;
+}
+.sign span{
+    font-weight: 500;
+
+}
+.sign:hover{
+    background-color: #d52196 ;
+    color: #e7eeee;
+    border: none;
+}
+@media screen and (max-width: 768px) {
+    .header {
+        height: auto;
+        padding: 40px 0;
+    }
+    
+    .header_titles {
+        flex-direction: column;
+        height: auto;
+        text-align: center;
+    }
+    
+    .header_titles p {
+        font-size: 32px;
+        margin-left: 0;
+        margin-top: 10px;
+        text-align: center;
+    }
+    
+    .des span {
+        font-size: 18px;
+    }
+    
+    .headerbuttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header_titles p {
+        font-size: 24px;
+    }
+    
+    .des span {
+        font-size: 16px;
+    }
+    
+    .get_started, .sign {
+        width: 100%;
+        justify-content: center;
+    }
+}

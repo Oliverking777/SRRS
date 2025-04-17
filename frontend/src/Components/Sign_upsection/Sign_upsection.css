@@ -1,0 +1,110 @@
+.user_sect{
+    background-color: #7186fa ;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: aliceblue;
+    border-radius: 10px;
+}
+.user_sect p{
+    font-size: 16px;
+}
+.sections{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: 10px;
+}
+.user_head{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+.user_head h1{
+    color: aliceblue;
+    font-size: 25px;
+
+}
+.user_head p{
+    margin-top: -10px;
+}
+.user_body{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.user_body img{
+    height: 30px;
+    width: 30px;
+}
+.start{
+    margin-top: 20px;
+    height: 45px;
+    width: 90%;
+    align-self: center;
+    border-radius: 10px;
+    border: none;
+    background-color: #596cd0 ;
+    color: aliceblue;
+    font-size: 16px;
+    font-weight: bold;
+}
+.admin_sect{
+    background-color: #fafbfe  ;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: #0b0b0c ;
+    border-radius: 10px;
+    border: #fa2e50  solid 2px;
+}
+.admin_sect h1{
+    color: #0b0b0c;
+}
+.signipsec{
+    margin-top: 150px;
+}
+
+@media screen and (max-width: 1200px) {
+    .sections {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .user_sect, .admin_sect {
+        max-width: 800px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .signipsec {
+        margin-top: 50px;
+    }
+    
+    .sign_head h1 {
+        font-size: 32px;
+    }
+    
+    .sign_head p {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .user_head {
+        align-items: center;
+        text-align: center;
+    }
+    
+    .user_body {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .user_body p {
+        margin-top: 0;
+    }
+}
