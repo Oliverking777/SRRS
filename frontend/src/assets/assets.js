@@ -6,12 +6,14 @@ import  security from  './icons8-security-shield-100.png'
 import location from './icons8-location-100.png'
 import tick from './icons8-tick-48.png'
 import tickred from './icons8-tick1-48.png'
+import cross from './cross_icon.png'
 
 export const assets = {
     heart_rate,
     arrow_right,
     tick,
-    tickred
+    tickred,
+    cross
     
 
     // add more assets here
