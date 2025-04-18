@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUpModal = ({ onClose, switchToLogin }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    secretKey: "",
     agreeToTerms: false
   });
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,12 +26,19 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFormSubmitted(true);
     
     console.log("Signup form submitted:", formData);
     
+    if (activeTab === "user") {
+      onClose();
+      navigate("/userdashboard", { replace: true });
+    } else {
+      console.log("Admin signup - different flow");
+      // Handle admin route
+    }
   };
 
-  
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -68,7 +79,7 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 type="text"
                 id="fullName"
                 name="fullName"
-                placeholder="John Doe"
+                placeholder="Your Name"
                 value={formData.fullName}
                 onChange={handleChange}
                 required
@@ -114,6 +125,21 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
               />
             </div>
             
+            {activeTab === "admin" && (
+              <div className="form-group">
+                <label htmlFor="secretKey">Secret Key</label>
+                <input
+                  type="password"
+                  id="secretKey"
+                  name="secretKey"
+                  placeholder="Enter admin secret key"
+                  value={formData.secretKey}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
+            
             <div className="checkbox-group terms">
               <input
                 type="checkbox"
@@ -128,7 +154,11 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
               </label>
             </div>
             
-            <button type="submit" className="submit-btn">Create account</button>
+            {activeTab === "user" ? (
+              <button type="submit" className="submit-btn">Create account</button>
+            ) : (
+              <button type="submit" className="submit-btn">Create admin account</button>
+            )}
           </form>
           
           <p className="redirect-text">

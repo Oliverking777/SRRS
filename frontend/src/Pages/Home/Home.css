@@ -4,11 +4,18 @@ body {
     font-family: Arial, sans-serif;
     overflow-x: hidden;
 }
+.home {
+    text-align: center;
+    padding: 4px;
+    background-color: #e2dfdf;
+  
+  }
 
 hr {
     
     border-top: 1.5px solid #9f9c9c;
     margin: 0;
+    opacity: 0.2;
 }
 
 

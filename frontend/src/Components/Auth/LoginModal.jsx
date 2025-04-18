@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
+import { Link, useNavigate } from "react-router-dom";
+
 
 const LoginModal = ({ onClose, switchToSignup }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    secretKey: "",
     rememberMe: false
   });
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -20,12 +25,19 @@ const LoginModal = ({ onClose, switchToSignup }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFormSubmitted(true);
     
     console.log("Login form submitted:", formData);
     
+    if (activeTab === "user") {
+      onClose();
+      navigate("/userdashboard", { replace: true });
+    } else {
+      console.log("Admin login - different flow");
+      // For admin route handling
+    }
   };
 
-  
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -86,6 +98,21 @@ const LoginModal = ({ onClose, switchToSignup }) => {
               />
             </div>
             
+            {activeTab === "admin" && (
+              <div className="form-group">
+                <label htmlFor="secretKey">Secret Key</label>
+                <input
+                  type="password"
+                  id="secretKey"
+                  name="secretKey"
+                  placeholder="Enter admin secret key"
+                  value={formData.secretKey}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
+            
             <div className="form-row">
               <div className="checkbox-group">
                 <input
@@ -100,7 +127,11 @@ const LoginModal = ({ onClose, switchToSignup }) => {
               <span className="forgot-link">Forgot password?</span>
             </div>
             
-            <button type="submit" className="submit-btn">Sign in</button>
+            {activeTab === "user" ? (
+              <button type="submit" className="submit-btn">Sign in</button>
+            ) : (
+              <button type="submit" className="submit-btn">Admin Sign in</button>
+            )}
           </form>
           
           <p className="redirect-text">

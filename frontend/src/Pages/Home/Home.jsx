@@ -6,16 +6,18 @@ import Sign_upsection from "../../Components/Sign_upsection/Sign_upsection";
 import Footer from "../../Components/Footer/Footer";
 import "./Home.css";
 
+
+
 const Home = () => {
   return (
-    <div>
+    <div className="home">
       <Nav_bar />
       <hr />
       <Header />
       <Feature />
       <Sign_upsection />
       <hr />
-      <Footer/>
+      <Footer />
     </div>
   );
 };
