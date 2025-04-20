@@ -35,7 +35,7 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
       navigate("/userdashboard", { replace: true });
     } else {
       console.log("Admin signup - different flow");
-      // Handle admin route
+      
     }
   };
 

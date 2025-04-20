@@ -3,6 +3,7 @@ import Home from '../Pages/Home/Home'
 
 import { Route, Routes } from "react-router-dom";
 import Userboard from '../Pages/Board/Userboard';
+import Adminboard from '../Pages/Board/Adminboard';
 
 const Router = () => {
   return (
@@ -10,6 +11,8 @@ const Router = () => {
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/userdashboard" element={<Userboard />} />
+        <Route path="/admindashboard" element={<Adminboard/>}/>
+
       </Routes>
     </div>
   )

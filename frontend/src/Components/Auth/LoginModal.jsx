@@ -35,6 +35,8 @@ const LoginModal = ({ onClose, switchToSignup }) => {
     } else {
       console.log("Admin login - different flow");
       // For admin route handling
+      onClose();
+      navigate("/admindashboard", { replace: true });
     }
   };
 
