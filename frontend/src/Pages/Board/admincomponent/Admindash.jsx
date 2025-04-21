@@ -389,46 +389,7 @@ const Admindash = () => {
                 borderBottom: "1px solid #E5E7EB",
               }}
             >
-              <button
-                style={{
-                  padding: "8px 16px",
-                  borderBottom: "2px solid #3B82F6",
-                  color: "#2563EB",
-                  fontWeight: "500",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                Overview
-              </button>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  color: "#6B7280",
-                  fontWeight: "500",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                Reports
-              </button>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  color: "#6B7280",
-                  fontWeight: "500",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                Users
-              </button>
+              
             </div>
           </div>
           <div
