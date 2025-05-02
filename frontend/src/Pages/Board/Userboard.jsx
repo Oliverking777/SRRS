@@ -117,7 +117,7 @@ const Userboard = () => {
         </div>
 
         {/* Render different content based on activeSection */}
-        {activeSection === 'dashboard' && <Dashb />}
+        {activeSection === 'dashboard' && <Dashb onNavigate={handleNavClick} />}
         {activeSection === 'newReport' && <New_Report />}
         {activeSection === 'profile' && <ProfileCont />}
         {activeSection === 'settings' && <Setting/>}

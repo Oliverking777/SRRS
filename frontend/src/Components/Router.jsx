@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import Userboard from '../Pages/Board/Userboard';
 import Adminboard from '../Pages/Board/Adminboard';
 
+
 const Router = () => {
   return (
     <div>
@@ -12,6 +13,7 @@ const Router = () => {
         <Route path="/" element={<Home />} />
         <Route path="/userdashboard" element={<Userboard />} />
         <Route path="/admindashboard" element={<Adminboard/>}/>
+        
 
       </Routes>
     </div>

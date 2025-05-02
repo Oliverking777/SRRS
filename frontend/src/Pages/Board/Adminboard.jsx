@@ -4,6 +4,7 @@ import Admindash from "./admincomponent/Admindash";
 import Adminusers from "./admincomponent/Adminusers";
 import Adminreport from "./admincomponent/Adminreport";
 import Adminsetting from "./admincomponent/Adminsetting";
+import Geo_distri from "./admincomponent/Geo_distri";
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -144,6 +145,24 @@ const Adminboard = () => {
               </span>
               Settings
             </li>
+            <li
+              className={activeSection === "Geo" ? "active" : ""}
+              onClick={() => handleNavClick("Geo")}
+            >
+              <span className="nav-icon">
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="7" r="4" />
+                  <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                </svg>
+              </span>
+              Geographical Distribution
+            </li>
           </ul>
         </div>
 
@@ -199,6 +218,7 @@ const Adminboard = () => {
         {activeSection === "Users" && <Adminusers />}
         {activeSection === "Reports" && <Adminreport />}
         {activeSection === "settings" && <Adminsetting />}
+        {activeSection === "Geo" && <Geo_distri />}
       </div>
     </div>
   );
