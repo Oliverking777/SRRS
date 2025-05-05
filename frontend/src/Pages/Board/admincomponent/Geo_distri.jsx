@@ -1,221 +1,196 @@
-import React, { useState, useEffect } from "react";
-import "./Geo_distri.css";
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import './Geo_distri.css';
 
 const Geo_distri = () => {
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredRegions, setFilteredRegions] = useState([]);
+  // Sample data for Yaoundé neighborhoods with distribution metrics
+  // In a real application, this would come from your API or database
+  const [districtsData, setDistrictsData] = useState([
+    { 
+      id: 1, 
+      name: "Yaoundé 1 (Centre)", 
+      coordinates: [3.866667, 11.516667], 
+      count: 245, 
+      density: "High"
+    },
+    { 
+      id: 8, 
+      name: "Ngousso (Centre)", 
+      coordinates: [4.866667, 8.516667], 
+      count: 500, 
+      density: "High"
+    },
+    { 
+      id: 2, 
+      name: "Yaoundé 2 (Tsinga)", 
+      coordinates: [3.883333, 11.500000], 
+      count: 187, 
+      density: "Medium"
+    },
+    { 
+      id: 3, 
+      name: "Yaoundé 3 (Efoulan)", 
+      coordinates: [3.833333, 11.483333], 
+      count: 213, 
+      density: "High" 
+    },
+    { 
+      id: 4, 
+      name: "Yaoundé 4 (Kondengui)", 
+      coordinates: [3.850000, 11.533333], 
+      count: 156, 
+      density: "Medium" 
+    },
+    { 
+      id: 5, 
+      name: "Yaoundé 5 (Essos)", 
+      coordinates: [3.883333, 11.533333], 
+      count: 178, 
+      density: "Medium" 
+    },
+    { 
+      id: 6, 
+      name: "Yaoundé 6 (Biyem-Assi)", 
+      coordinates: [3.816667, 11.483333], 
+      count: 267, 
+      density: "High" 
+    },
+    { 
+      id: 7, 
+      name: "Yaoundé 7 (Nkolbisson)", 
+      coordinates: [3.866667, 11.450000], 
+      count: 132, 
+      density: "Low" 
+    }
+  ]);
 
-  // Sample data for Yaoundé neighborhoods
-  const yaoundeNeighborhoods = [
-    { id: "bastos", name: "Bastos", reports: 124, position: { top: "30%", left: "45%" } },
-    { id: "mvog-mbi", name: "Mvog-Mbi", reports: 98, position: { top: "55%", left: "60%" } },
-    { id: "biyem-assi", name: "Biyem-Assi", reports: 156, position: { top: "65%", left: "35%" } },
-    { id: "mfoundassi", name: "Mfoundassi", reports: 87, position: { top: "45%", left: "45%" } },
-    { id: "ngoa-ekelle", name: "Ngoa-Ekelle", reports: 112, position: { top: "55%", left: "42%" } },
-    { id: "omnisport", name: "Omnisport", reports: 65, position: { top: "40%", left: "65%" } },
-    { id: "mvan", name: "Mvan", reports: 42, position: { top: "75%", left: "50%" } },
-    { id: "mimboman", name: "Mimboman", reports: 78, position: { top: "40%", left: "75%" } },
-    { id: "mfoundi", name: "Mfoundi", reports: 93, position: { top: "50%", left: "50%" } },
-    { id: "ekounou", name: "Ekounou", reports: 59, position: { top: "55%", left: "70%" } },
-    { id: "tsinga", name: "Tsinga", reports: 73, position: { top: "30%", left: "40%" } },
-    { id: "mendong", name: "Mendong", reports: 89, position: { top: "70%", left: "25%" } },
-    { id: "ahala", name: "Ahala", reports: 45, position: { top: "80%", left: "42%" } },
-    { id: "emana", name: "Emana", reports: 62, position: { top: "20%", left: "55%" } },
-    { id: "nkolbisson", name: "Nkolbisson", reports: 39, position: { top: "35%", left: "20%" } }
-  ];
+  // Stats summary
+  const [stats, setStats] = useState({
+    totalCount: 0,
+    highDensity: 0,
+    mediumDensity: 0,
+    lowDensity: 0
+  });
 
+  // Calculate summary stats when district data changes
   useEffect(() => {
-    setFilteredRegions(
-      yaoundeNeighborhoods.filter(region => 
-        region.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm]);
+    const newStats = {
+      totalCount: districtsData.reduce((sum, district) => sum + district.count, 0),
+      highDensity: districtsData.filter(d => d.density === "High").length,
+      mediumDensity: districtsData.filter(d => d.density === "Medium").length,
+      lowDensity: districtsData.filter(d => d.density === "Low").length
+    };
+    setStats(newStats);
+  }, [districtsData]);
 
-  // Function to determine marker color based on report count
-  const getMarkerColor = (reports) => {
-    if (reports >= 120) return "#e2492d";
-    if (reports >= 90) return "#ff5533";
-    if (reports >= 70) return "#ff8a75";
-    if (reports >= 50) return "#ffad9f";
-    return "#ffcec5";
+  // Get circle color based on density
+  const getMarkerColor = (density) => {
+    switch(density) {
+      case "High":
+        return "#ff5252"; // Red
+      case "Medium":
+        return "#ffb142"; // Orange
+      case "Low":
+        return "#33d9b2"; // Green
+      default:
+        return "#34ace0"; // Blue
+    }
   };
 
-  // Function to determine marker size based on report count
-  const getMarkerSize = (reports) => {
-    const baseSize = 20;
-    const factor = reports / 40;
-    return Math.max(baseSize, baseSize * factor);
-  };
-
-  // Handle region selection
-  const handleRegionClick = (region) => {
-    setSelectedRegion(region.id === selectedRegion ? null : region.id);
+  // Get circle size based on count
+  const getMarkerSize = (count) => {
+    return Math.min(Math.max(count / 10, 10), 30);
   };
 
   return (
     <div className="geo-distribution-container">
       <div className="geo-header">
-        <h1>Geographical Distribution - Yaoundé</h1>
-        <p>Distribution of reports across neighborhoods in Yaoundé</p>
+        <h2>Geographical Distribution - Yaoundé</h2>
+        <div className="geo-stats">
+          <div className="stat-card">
+            <span className="stat-value">{stats.totalCount}</span>
+            <span className="stat-label">Total Reports</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-value">{stats.highDensity}</span>
+            <span className="stat-label">High Density Areas</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-value">{stats.mediumDensity}</span>
+            <span className="stat-label">Medium Density Areas</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-value">{stats.lowDensity}</span>
+            <span className="stat-label">Low Density Areas</span>
+          </div>
+        </div>
       </div>
 
-      <div className="map-controls">
-        <div className="search-box">
-          <input 
-            type="text" 
-            placeholder="Search for a neighborhood..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+      <div className="geo-map-legend">
+        <div className="legend-item">
+          <span className="legend-color" style={{backgroundColor: "#ff5252"}}></span>
+          <span>High Density</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color" style={{backgroundColor: "#ffb142"}}></span>
+          <span>Medium Density</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color" style={{backgroundColor: "#33d9b2"}}></span>
+          <span>Low Density</span>
+        </div>
+      </div>
+
+      <div className="geo-map-container">
+        <MapContainer 
+          center={[3.866667, 11.516667]} 
+          zoom={12} 
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-        </div>
-        <div className="map-legend">
-          <h3>Reports</h3>
-          <div className="legend-scale">
-            <div className="legend-items">
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: "#ffcec5" }}></div>
-                <span>0-50</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: "#ffad9f" }}></div>
-                <span>50-70</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: "#ff8a75" }}></div>
-                <span>70-90</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: "#ff5533" }}></div>
-                <span>90-120</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: "#e2492d" }}></div>
-                <span>120+</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="map-container">
-        {/* Map background */}
-        <div className="map-background">
-          <img src="/api/placeholder/800/600" alt="Yaoundé Map" className="map-image" />
-          <div className="map-overlay">
-            <h2 className="map-title">Yaoundé</h2>
-            {yaoundeNeighborhoods.map((region) => {
-              const isFiltered = filteredRegions.find(r => r.id === region.id);
-              const isSelected = selectedRegion === region.id;
-              const size = isSelected ? getMarkerSize(region.reports) * 1.3 : getMarkerSize(region.reports);
-              
-              return isFiltered ? (
-                <div 
-                  key={region.id}
-                  className={`map-marker ${isSelected ? 'selected' : ''}`}
-                  style={{
-                    top: region.position.top,
-                    left: region.position.left,
-                    backgroundColor: getMarkerColor(region.reports),
-                    width: `${size}px`,
-                    height: `${size}px`
-                  }}
-                  onClick={() => handleRegionClick(region)}
-                  title={`${region.name}: ${region.reports} reports`}
-                >
-                  <span className="marker-label">{region.name}</span>
-                  {isSelected && <span className="marker-count">{region.reports}</span>}
-                </div>
-              ) : null;
-            })}
-          </div>
-        </div>
-
-        {/* Region details */}
-        <div className="region-details">
-          {selectedRegion && (
-            <div className="selected-region-details">
-              {(() => {
-                const region = yaoundeNeighborhoods.find(r => r.id === selectedRegion);
-                return (
-                  <>
-                    <h2>{region.name}</h2>
-                    <div className="details-grid">
-                      <div className="detail-item">
-                        <h3>Total Reports</h3>
-                        <p>{region.reports}</p>
-                      </div>
-                      <div className="detail-item">
-                        <h3>Percentage of Total</h3>
-                        <p>
-                          {(
-                            (region.reports / yaoundeNeighborhoods.reduce((sum, n) => sum + n.reports, 0)) * 100
-                          ).toFixed(1)}%
-                        </p>
-                      </div>
-                      <div className="detail-item">
-                        <h3>Status</h3>
-                        <p>
-                          {region.reports > 100 ? "High Activity" : 
-                           region.reports > 50 ? "Moderate Activity" : "Low Activity"}
-                        </p>
-                      </div>
-                      <div className="detail-item">
-                        <h3>Trend</h3>
-                        <p>+8% from previous month</p>
-                      </div>
-                    </div>
-                  </>
-                );
-              })()}
-            </div>
-          )}
-          {!selectedRegion && (
-            <div className="summary-stats">
-              <h2>Summary Statistics</h2>
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <h3>Total Reports</h3>
-                  <p>{yaoundeNeighborhoods.reduce((sum, item) => sum + item.reports, 0)}</p>
-                </div>
-                <div className="stat-card">
-                  <h3>Neighborhoods</h3>
-                  <p>{yaoundeNeighborhoods.length}</p>
-                </div>
-                <div className="stat-card">
-                  <h3>Highest Reports</h3>
-                  <p>
-                    {yaoundeNeighborhoods.reduce((max, item) => item.reports > max.reports ? item : max, yaoundeNeighborhoods[0]).name} 
-                    ({yaoundeNeighborhoods.reduce((max, item) => item.reports > max.reports ? item : max, yaoundeNeighborhoods[0]).reports})
-                  </p>
-                </div>
-                <div className="stat-card">
-                  <h3>Average per Area</h3>
-                  <p>
-                    {(yaoundeNeighborhoods.reduce((sum, item) => sum + item.reports, 0) / yaoundeNeighborhoods.length).toFixed(1)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="neighborhood-list">
-        <h2>All Neighborhoods</h2>
-        <div className="list-container">
-          {filteredRegions.map(region => (
-            <div 
-              key={region.id} 
-              className={`list-item ${selectedRegion === region.id ? 'selected' : ''}`}
-              onClick={() => handleRegionClick(region)}
+          
+          {districtsData.map(district => (
+            <CircleMarker
+              key={district.id}
+              center={district.coordinates}
+              radius={getMarkerSize(district.count)}
+              fillColor={getMarkerColor(district.density)}
+              color="#fff"
+              weight={1}
+              fillOpacity={0.8}
             >
-              <div className="list-item-color" style={{ backgroundColor: getMarkerColor(region.reports) }}></div>
-              <div className="list-item-details">
-                <h3>{region.name}</h3>
-                <p>{region.reports} reports</p>
+              <Tooltip direction="top" offset={[0, -5]} opacity={1} permanent>
+                {district.name}
+              </Tooltip>
+              <Popup>
+                <div className="district-popup">
+                  <h3>{district.name}</h3>
+                  <p>Reports: {district.count}</p>
+                  <p>Density: {district.density}</p>
+                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MapContainer>
+      </div>
+
+      <div className="geo-district-list">
+        <h3>District Details</h3>
+        <div className="district-list-container">
+          {districtsData.map(district => (
+            <div key={district.id} className="district-item">
+              <div className="district-name">
+                <div 
+                  className="district-indicator" 
+                  style={{backgroundColor: getMarkerColor(district.density)}}
+                ></div>
+                <span>{district.name}</span>
               </div>
+              <div className="district-count">{district.count} reports</div>
             </div>
           ))}
         </div>

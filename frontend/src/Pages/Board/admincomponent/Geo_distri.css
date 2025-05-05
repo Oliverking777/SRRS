@@ -1,285 +1,148 @@
 .geo-distribution-container {
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .geo-header {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .geo-header h1 {
-    font-size: 24px;
-    margin-bottom: 8px;
-    color: #333;
-  }
-  
-  .geo-header p {
-    color: #666;
-  }
-  
-  .map-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .search-box input {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 300px;
-    font-size: 14px;
-  }
-  
-  .map-legend {
-    display: flex;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: calc(100vh - 70px);
+}
+
+.geo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.geo-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.geo-stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #3a86ff;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 4px;
+}
+
+.geo-map-legend {
+  display: flex;
+  gap: 15px;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.geo-map-container {
+  height: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+}
+
+.district-popup h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+}
+
+.district-popup p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.geo-district-list {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.geo-district-list h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.district-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.district-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.district-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.district-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.district-count {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .geo-stats {
     flex-direction: column;
-    align-items: flex-end;
   }
   
-  .map-legend h3 {
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #555;
+  .geo-map-container {
+    height: 900px;
   }
-  
-  .legend-scale {
-    background-color: #f9f9f9;
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #eee;
-  }
-  
-  .legend-items {
-    display: flex;
-    gap: 12px;
-  }
-  
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-  }
-  
-  .legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-  }
-  
-  .map-container {
-    position: relative;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .map-background {
-    position: relative;
-    width: 100%;
-    height: 500px;
-    background-color: #e6e6e6;
-  }
-  
-  .map-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.7;
-  }
-  
-  .map-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .map-title {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    color: #333;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-  }
-  
-  .map-marker {
-    position: absolute;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    z-index: 1;
-  }
-  
-  .map-marker.selected {
-    z-index: 2;
-    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(0, 0, 0, 0.3);
-  }
-  
-  .map-marker:hover {
-    transform: scale(1.1);
-  }
-  
-  .marker-label {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    color: #333;
-    white-space: nowrap;
-  }
-  
-  .marker-count {
-    font-size: 12px;
-    color: white;
-  }
-  
-  .region-details {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .selected-region-details h2 {
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 20px;
-  }
-  
-  .details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-  
-  .detail-item {
-    padding: 15px;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .detail-item h3 {
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .detail-item p {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .summary-stats h2 {
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 20px;
-  }
-  
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-  
-  .stat-card {
-    padding: 15px;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .stat-card h3 {
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .stat-card p {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .neighborhood-list {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .neighborhood-list h2 {
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 20px;
-  }
-  
-  .list-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  
-  .list-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .list-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .list-item.selected {
-    background-color: #e6e6e6;
-    border-left: 4px solid #007bff;
-  }
-  
-  .list-item-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-  
-  .list-item-details h3 {
-    margin: 0;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .list-item-details p {
-    margin: 0;
-    font-size: 12px;
-    color: #666;
-  }
+}
