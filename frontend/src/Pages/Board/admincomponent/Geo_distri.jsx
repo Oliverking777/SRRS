@@ -3,69 +3,10 @@ import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from 'react-lea
 import 'leaflet/dist/leaflet.css';
 import './Geo_distri.css';
 
-const Geo_distri = () => {
-  // Sample data for Yaoundé neighborhoods with distribution metrics
-  // In a real application, this would come from your API or database
-  const [districtsData, setDistrictsData] = useState([
-    { 
-      id: 1, 
-      name: "Yaoundé 1 (Centre)", 
-      coordinates: [3.866667, 11.516667], 
-      count: 245, 
-      density: "High"
-    },
-    { 
-      id: 8, 
-      name: "Ngousso (Centre)", 
-      coordinates: [4.866667, 8.516667], 
-      count: 500, 
-      density: "High"
-    },
-    { 
-      id: 2, 
-      name: "Yaoundé 2 (Tsinga)", 
-      coordinates: [3.883333, 11.500000], 
-      count: 187, 
-      density: "Medium"
-    },
-    { 
-      id: 3, 
-      name: "Yaoundé 3 (Efoulan)", 
-      coordinates: [3.833333, 11.483333], 
-      count: 213, 
-      density: "High" 
-    },
-    { 
-      id: 4, 
-      name: "Yaoundé 4 (Kondengui)", 
-      coordinates: [3.850000, 11.533333], 
-      count: 156, 
-      density: "Medium" 
-    },
-    { 
-      id: 5, 
-      name: "Yaoundé 5 (Essos)", 
-      coordinates: [3.883333, 11.533333], 
-      count: 178, 
-      density: "Medium" 
-    },
-    { 
-      id: 6, 
-      name: "Yaoundé 6 (Biyem-Assi)", 
-      coordinates: [3.816667, 11.483333], 
-      count: 267, 
-      density: "High" 
-    },
-    { 
-      id: 7, 
-      name: "Yaoundé 7 (Nkolbisson)", 
-      coordinates: [3.866667, 11.450000], 
-      count: 132, 
-      density: "Low" 
-    }
-  ]);
+import { useData } from '../../../Components/Contextprovider/ContextProvider';
 
-  // Stats summary
+const Geo_distri = () => {
+  const { districtsData, reportStats } = useData();
   const [stats, setStats] = useState({
     totalCount: 0,
     highDensity: 0,
@@ -73,16 +14,16 @@ const Geo_distri = () => {
     lowDensity: 0
   });
 
-  // Calculate summary stats when district data changes
+  // Calculate density stats when district data changes
   useEffect(() => {
     const newStats = {
-      totalCount: districtsData.reduce((sum, district) => sum + district.count, 0),
+      totalCount: reportStats.total, // Use total from reportStats
       highDensity: districtsData.filter(d => d.density === "High").length,
       mediumDensity: districtsData.filter(d => d.density === "Medium").length,
       lowDensity: districtsData.filter(d => d.density === "Low").length
     };
     setStats(newStats);
-  }, [districtsData]);
+  }, [districtsData, reportStats]);
 
   // Get circle color based on density
   const getMarkerColor = (density) => {
@@ -109,7 +50,7 @@ const Geo_distri = () => {
         <h2>Geographical Distribution - Yaoundé</h2>
         <div className="geo-stats">
           <div className="stat-card">
-            <span className="stat-value">{stats.totalCount}</span>
+            <span className="stat-value">{stats.totalCount.toLocaleString()}</span>
             <span className="stat-label">Total Reports</span>
           </div>
           <div className="stat-card">

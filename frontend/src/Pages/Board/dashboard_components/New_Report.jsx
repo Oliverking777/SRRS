@@ -1,14 +1,114 @@
 import React, { useState } from 'react';
-import './Newreport.css'
+import './Newreport.css';
+import { illnessTypes, symptoms, severityLevels, commonIllnesses } from '../../../assets/assets';
+import { useData } from '../../../Components/Contextprovider/ContextProvider';
 
 const New_Report = () => {
+  const { addNewReport } = useData();
   const [activeTab, setActiveTab] = useState("basic");
+  const [formData, setFormData] = useState({
+    illnessType: '',
+    symptoms: [],
+    otherSymptoms: '',
+    severity: '',
+    startDate: '',
+    location: '',
+    description: '',
+    contactInfected: false,
+    travel: false,
+    medicalAttention: false,
+    publicReport: true,
+    reportedBy: '',
+    email: '',
+  });
+  const [error, setError] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSymptomChange = (symptomId) => {
+    setFormData(prev => {
+      const symptoms = prev.symptoms.includes(symptomId)
+        ? prev.symptoms.filter(id => id !== symptomId)
+        : [...prev.symptoms, symptomId];
+      return { ...prev, symptoms };
+    });
+  };
+
+  const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.illnessType) {
+      setError('Please select a type of illness.');
+      return;
+    }
+    if (formData.symptoms.length === 0 && !formData.otherSymptoms) {
+      setError('Please select at least one symptom or describe other symptoms.');
+      return;
+    }
+    if (!formData.severity) {
+      setError('Please select a severity level.');
+      return;
+    }
+    if (!formData.startDate) {
+      setError('Please specify when symptoms started.');
+      return;
+    }
+    if (!formData.location) {
+      setError('Please provide a location.');
+      return;
+    }
+
+    // Prepare report data
+    const reportData = {
+      illnessType: illnessTypes.find(illness => illness.value === formData.illnessType)?.label || formData.illnessType,
+      reportedBy: formData.reportedBy,
+      email: formData.email,
+      location: formData.location,
+      date: new Date(formData.startDate).toISOString(),
+      severity: severityLevels.find(level => level.value === formData.severity)?.label || formData.severity,
+      symptoms: formData.symptoms.map(id => symptoms.find(s => s.id === id)?.label).filter(Boolean),
+      otherSymptoms: formData.otherSymptoms,
+      description: formData.description,
+      contactInfected: formData.contactInfected,
+      travel: formData.travel,
+      medicalAttention: formData.medicalAttention,
+      publicReport: formData.publicReport,
+    };
+
+    // Submit report
+    addNewReport(reportData);
+    setError('');
+    // Reset form
+    setFormData({
+      illnessType: '',
+      symptoms: [],
+      otherSymptoms: '',
+      severity: '',
+      startDate: '',
+      location: '',
+      description: '',
+      contactInfected: false,
+      travel: false,
+      medicalAttention: false,
+      publicReport: true,
+      reportedBy: '',
+      email: '',
+    });
+    setActiveTab('basic');
+    alert('Report submitted successfully!');
+  };
 
   return (
     <div className="sickness-report-container">
       <div className="report-header">
         <h1>New Sickness Report</h1>
         <p>Submit a new report to record sickness information and help track regional health data.</p>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
       
       <div className="report-content">
@@ -24,13 +124,15 @@ const New_Report = () => {
                 <div className="form-group">
                   <label>Type of Illness</label>
                   <div className="select-wrapper">
-                    <select>
-                      <option>Select type of illness</option>
-                      <option value="covid19">COVID-19</option>
-                      <option value="flu">Influenza</option>
-                      <option value="cold">Common Cold</option>
-                      <option value="foodPoisoning">Food Poisoning</option>
-                      <option value="other">Other</option>
+                    <select
+                      name="illnessType"
+                      value={formData.illnessType}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select type of illness</option>
+                      {illnessTypes.map(illness => (
+                        <option key={illness.value} value={illness.value}>{illness.label}</option>
+                      ))}
                     </select>
                     <div className="select-arrow"></div>
                   </div>
@@ -41,68 +143,43 @@ const New_Report = () => {
                   <p className="small-text">Select all symptoms that apply</p>
                   
                   <div className="symptoms-grid">
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="fever" />
-                      <label htmlFor="fever">Fever</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="headache" />
-                      <label htmlFor="headache">Headache</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="bodyAches" />
-                      <label htmlFor="bodyAches">Body Aches</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="tasteSmell" />
-                      <label htmlFor="tasteSmell">Loss of Taste/Smell</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="cough" />
-                      <label htmlFor="cough">Cough</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="soreThroat" />
-                      <label htmlFor="soreThroat">Sore Throat</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="nausea" />
-                      <label htmlFor="nausea">Nausea</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="rash" />
-                      <label htmlFor="rash">Rash</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="fatigue" />
-                      <label htmlFor="fatigue">Fatigue</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="shortnessBreath" />
-                      <label htmlFor="shortnessBreath">Shortness of Breath</label>
-                    </div>
-                    <div className="symptom-checkbox">
-                      <input type="checkbox" id="diarrhea" />
-                      <label htmlFor="diarrhea">Diarrhea</label>
-                    </div>
+                    {symptoms.map(symptom => (
+                      <div key={symptom.id} className="symptom-checkbox">
+                        <input
+                          type="checkbox"
+                          id={symptom.id}
+                          checked={formData.symptoms.includes(symptom.id)}
+                          onChange={() => handleSymptomChange(symptom.id)}
+                        />
+                        <label htmlFor={symptom.id}>{symptom.label}</label>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 
                 <div className="form-group">
                   <label>Other Symptoms</label>
-                  <textarea placeholder="Enter any other symptoms"></textarea>
+                  <textarea
+                    name="otherSymptoms"
+                    value={formData.otherSymptoms}
+                    onChange={handleInputChange}
+                    placeholder="Enter any other symptoms"
+                  ></textarea>
                   <p className="helper-text">If you have any symptoms not listed above</p>
                 </div>
                 
                 <div className="form-group">
                   <label>Severity Level</label>
                   <div className="select-wrapper">
-                    <select>
-                      <option>Select severity level</option>
-                      <option value="mild">Mild</option>
-                      <option value="moderate">Moderate</option>
-                      <option value="severe">Severe</option>
-                      <option value="critical">Critical</option>
+                    <select
+                      name="severity"
+                      value={formData.severity}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select severity level</option>
+                      {severityLevels.map(level => (
+                        <option key={level.value} value={level.value}>{level.label}</option>
+                      ))}
                     </select>
                     <div className="select-arrow"></div>
                   </div>
@@ -111,7 +188,13 @@ const New_Report = () => {
                 <div className="form-group">
                   <label>When did symptoms start?</label>
                   <div className="date-picker">
-                    <input type="text" placeholder="Pick a date" />
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleInputChange}
+                      placeholder="Pick a date"
+                    />
                     <span className="calendar-icon">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -137,20 +220,59 @@ const New_Report = () => {
                 </div>
                 
                 <div className="form-group">
+                  <label>Name (Optional)</label>
+                  <input
+                    type="text"
+                    name="reportedBy"
+                    value={formData.reportedBy}
+                    onChange={handleInputChange}
+                    placeholder="Enter your name"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Email (Optional)</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                
+                <div className="form-group">
                   <label>Location</label>
-                  <input type="text" placeholder="Enter city, region or area" />
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="Enter city, region or area"
+                  />
                   <p className="helper-text">Where the illness was likely contracted or where you are currently located</p>
                 </div>
                 
                 <div className="form-group">
                   <label>Description</label>
-                  <textarea placeholder="Provide additional details about your illness"></textarea>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Provide additional details about your illness"
+                  ></textarea>
                   <p className="helper-text">Any additional information that might be relevant</p>
                 </div>
                 
                 <div className="checkbox-group">
                   <div className="checkbox-with-description">
-                    <input type="checkbox" id="contactInfected" />
+                    <input
+                      type="checkbox"
+                      id="contactInfected"
+                      name="contactInfected"
+                      checked={formData.contactInfected}
+                      onChange={handleInputChange}
+                    />
                     <div>
                       <label htmlFor="contactInfected">Contact with infected person</label>
                       <p className="helper-text">Have you been in contact with someone known to have similar symptoms?</p>
@@ -158,7 +280,13 @@ const New_Report = () => {
                   </div>
                   
                   <div className="checkbox-with-description">
-                    <input type="checkbox" id="travel" />
+                    <input
+                      type="checkbox"
+                      id="travel"
+                      name="travel"
+                      checked={formData.travel}
+                      onChange={handleInputChange}
+                    />
                     <div>
                       <label htmlFor="travel">Recent travel history</label>
                       <p className="helper-text">Have you traveled outside your region in the last 14 days?</p>
@@ -166,7 +294,13 @@ const New_Report = () => {
                   </div>
                   
                   <div className="checkbox-with-description">
-                    <input type="checkbox" id="medicalAttention" />
+                    <input
+                      type="checkbox"
+                      id="medicalAttention"
+                      name="medicalAttention"
+                      checked={formData.medicalAttention}
+                      onChange={handleInputChange}
+                    />
                     <div>
                       <label htmlFor="medicalAttention">Sought medical attention</label>
                       <p className="helper-text">Have you consulted a healthcare provider regarding this illness?</p>
@@ -177,7 +311,13 @@ const New_Report = () => {
                 <div className="privacy-section">
                   <h2>Privacy Settings</h2>
                   <div className="checkbox-with-description">
-                    <input type="checkbox" id="publicReport" defaultChecked />
+                    <input
+                      type="checkbox"
+                      id="publicReport"
+                      name="publicReport"
+                      checked={formData.publicReport}
+                      onChange={handleInputChange}
+                    />
                     <div>
                       <label htmlFor="publicReport">Public Report</label>
                       <p className="helper-text">Make this report available for public health analysis (anonymized)</p>
@@ -187,8 +327,25 @@ const New_Report = () => {
                 
                 <div className="form-actions">
                   <button className="btn-back" onClick={() => setActiveTab("basic")}>Back</button>
-                  <button className="btn-cancel">Cancel</button>
-                  <button className="btn-submit">Submit Report</button>
+                  <button className="btn-cancel" onClick={() => {
+                    setFormData({
+                      illnessType: '',
+                      symptoms: [],
+                      otherSymptoms: '',
+                      severity: '',
+                      startDate: '',
+                      location: '',
+                      description: '',
+                      contactInfected: false,
+                      travel: false,
+                      medicalAttention: false,
+                      publicReport: true,
+                      reportedBy: '',
+                      email: '',
+                    });
+                    setActiveTab('basic');
+                  }}>Cancel</button>
+                  <button className="btn-submit" onClick={handleSubmit}>Submit Report</button>
                 </div>
               </>
             )}
@@ -231,45 +388,17 @@ const New_Report = () => {
           <div className="sidebar-card">
             <h3>Common Illnesses in Your Area</h3>
             
-            <div className="illness-stat">
-              <div className="illness-header">
-                <span>Respiratory Infections</span>
-                <span>65%</span>
+            {commonIllnesses.map(illness => (
+              <div key={illness.name} className="illness-stat">
+                <div className="illness-header">
+                  <span>{illness.name}</span>
+                  <span>{illness.percentage}%</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress" style={{ width: `${illness.percentage}%` }}></div>
+                </div>
               </div>
-              <div className="progress-bar">
-                <div className="progress" style={{ width: "65%" }}></div>
-              </div>
-            </div>
-            
-            <div className="illness-stat">
-              <div className="illness-header">
-                <span>Gastrointestinal</span>
-                <span>42%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress" style={{ width: "42%" }}></div>
-              </div>
-            </div>
-            
-            <div className="illness-stat">
-              <div className="illness-header">
-                <span>Viral Infections</span>
-                <span>28%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress" style={{ width: "28%" }}></div>
-              </div>
-            </div>
-            
-            <div className="illness-stat">
-              <div className="illness-header">
-                <span>Allergic Reactions</span>
-                <span>15%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress" style={{ width: "15%" }}></div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
