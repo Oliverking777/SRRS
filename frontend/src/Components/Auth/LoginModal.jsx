@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { signIn } from "../../../backend/services/authService";
 
 const LoginModal = ({ onClose, switchToSignup }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,7 +15,6 @@ const LoginModal = ({ onClose, switchToSignup }) => {
     rememberMe: false,
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -22,20 +23,29 @@ const LoginModal = ({ onClose, switchToSignup }) => {
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate login and navigation
-    if (activeTab === "user") {
-      onClose();
-      navigate("/userdashboard", { replace: true });
-    } else {
-      onClose();
-      navigate("/admindashboard", { replace: true });
+    setError("");
+
+    try {
+      const response = await signIn(
+        formData.email,
+        formData.password,
+        activeTab,
+        formData.secretKey
+      );
+
+      if (response.success) {
+        onClose();
+        navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
+          replace: true,
+        });
+      }
+    } catch (error) {
+      setError(error.message);
     }
   };
 
-  // Close modal on overlay click
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -119,6 +129,7 @@ const LoginModal = ({ onClose, switchToSignup }) => {
               </div>
               <span className="forgot-link">Forgot password?</span>
             </div>
+            {error && <p className="error-message">{error}</p>}
             <button type="submit" className="submit-btn">
               {activeTab === "user" ? "Sign in" : "Admin Sign in"}
             </button>

@@ -1,23 +1,19 @@
-// backend/SickNessForm/sicknessReportApi.js
-const express = require("express");
-const { initializeApp, getApp } = require("firebase/app");
-const { getFirestore, collection, addDoc } = require("firebase/firestore");
-require("dotenv").config();
+import express from "express";
+import { initializeApp, getApp } from "firebase/app";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 const router = express.Router();
 
-// Firebase config (use your .env values)
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase app
 let app;
 try {
   app = getApp();
@@ -26,7 +22,6 @@ try {
 }
 const db = getFirestore(app);
 
-// POST /api/sickness-report
 router.post("/sickness-report", async (req, res) => {
   const {
     illnessType,
@@ -71,22 +66,26 @@ router.post("/sickness-report", async (req, res) => {
     contactInfected: !!contactInfected,
     travel: !!travel,
     medicalAttention: !!medicalAttention,
-    publicReport: publicReport !== false, // default true
+    publicReport: publicReport !== false,
     reportedBy: reportedBy || "",
     email: email || "",
     createdAt: new Date().toISOString(),
   };
 
   try {
-    await addDoc(collection(db, "sicknessReports"), reportData);
-    return res
-      .status(201)
-      .json({ success: true, message: "Report submitted successfully." });
+    const docRef = await addDoc(collection(db, "sicknessReports"), reportData);
+    return res.status(201).json({
+      success: true,
+      message: "Report submitted successfully.",
+      reportId: docRef.id,
+    });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ error: "Failed to submit report.", details: err.message });
+    console.error("Error submitting report:", err);
+    return res.status(500).json({
+      error: "Failed to submit report.",
+      details: err.message,
+    });
   }
 });
 
-module.exports = router;
+export default router;
