@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "d3-scale": "^4.0.2",
+    "express": "^5.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.490.0",
     "react": "^19.0.0",

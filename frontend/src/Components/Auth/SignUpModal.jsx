@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
-import { Link, useNavigate } from "react-router-dom";
-
-import { useData } from "../Contextprovider/ContextProvider";
+import { useNavigate } from "react-router-dom";
 
 const SignUpModal = ({ onClose, switchToLogin }) => {
   const navigate = useNavigate();
-  const { addNewUser } = useData();
   const [activeTab, setActiveTab] = useState("user");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -15,25 +12,23 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
     password: "",
     confirmPassword: "",
     secretKey: "",
-    agreeToTerms: false
+    agreeToTerms: false,
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
   const [error, setError] = useState("");
 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
     setError("");
-
-    // Validate form
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -46,27 +41,17 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
       setError("Secret key is required for admin signup");
       return;
     }
-
+    // Simulate user creation and navigation
     if (activeTab === "user") {
-      // Add new user to context
-      addNewUser({
-        fullName: formData.fullName,
-        email: formData.email,
-        role: "User",
-      });
-      console.log("User signup submitted:", formData);
-      onClose();
       navigate("/userdashboard", { replace: true });
     } else {
-      // Admin signup (unchanged for now)
-      console.log("Admin signup - different flow");
+      navigate("/admindashboard", { replace: true });
     }
   };
 
+  // Close modal on overlay click
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   return (
@@ -80,24 +65,23 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
           </div>
           <h2>Create an account</h2>
           <p>Enter your details to create your account</p>
-          
-          {error && <p className="error-text" style={{ color: "#EF4444", marginBottom: "16px" }}>{error}</p>}
-          
+          {error && (
+            <p className="error-text" style={{ color: "#EF4444", marginBottom: 16 }}>{error}</p>
+          )}
           <div className="tabs">
-            <button 
+            <button
               className={`tab ${activeTab === "user" ? "active" : ""}`}
               onClick={() => setActiveTab("user")}
             >
               User
             </button>
-            <button 
+            <button
               className={`tab ${activeTab === "admin" ? "active" : ""}`}
               onClick={() => setActiveTab("admin")}
             >
               Admin
             </button>
           </div>
-          
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="fullName">Full Name</label>
@@ -111,7 +95,6 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
@@ -124,7 +107,6 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
@@ -137,7 +119,6 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
@@ -150,7 +131,6 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 required
               />
             </div>
-            
             {activeTab === "admin" && (
               <div className="form-group">
                 <label htmlFor="secretKey">Secret Key</label>
@@ -165,7 +145,6 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 />
               </div>
             )}
-            
             <div className="checkbox-group terms">
               <input
                 type="checkbox"
@@ -179,16 +158,15 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 I agree to the <span className="terms-link">terms and conditions</span>
               </label>
             </div>
-            
-            {activeTab === "user" ? (
-              <button type="submit" className="submit-btn">Create account</button>
-            ) : (
-              <button type="submit" className="submit-btn">Create admin account</button>
-            )}
+            <button type="submit" className="submit-btn">
+              {activeTab === "user" ? "Create account" : "Create admin account"}
+            </button>
           </form>
-          
           <p className="redirect-text">
-            Already have an account? <span onClick={switchToLogin} className="redirect-link">Sign in</span>
+            Already have an account?{' '}
+            <span onClick={switchToLogin} className="redirect-link">
+              Sign in
+            </span>
           </p>
         </div>
       </div>
