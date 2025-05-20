@@ -20,6 +20,7 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
   });
   const [error, setError] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -28,6 +29,34 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
       [name]: type === "checkbox" ? checked : value,
     }));
     if (error) setError("");
+  };
+
+  const validateForm = () => {
+    if (!formData.fullName.trim()) {
+      setError("Full name is required");
+      return false;
+    }
+    if (!formData.email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!formData.password) {
+      setError("Password is required");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
+    if (activeTab === "admin" && !formData.secretKey) {
+      setError("Secret key is required for admin signup");
+      return false;
+    }
+    if (!formData.agreeToTerms) {
+      setError("You must agree to the terms and conditions");
+      return false;
+    }
+    return true;
   };
 
   const handleGoogleSignUp = async () => {
@@ -50,21 +79,9 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
     e.preventDefault();
     setError("");
 
-    if (!formData.password) {
-      setError("Password is required");
-      return;
-    }
+    if (!validateForm()) return;
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (!formData.agreeToTerms) {
-      setError("You must agree to the terms and conditions");
-      return;
-    }
-
+    setIsLoading(true);
     try {
       const response = await signUp(
         formData.email,
@@ -83,6 +100,8 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
       }
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -231,11 +250,26 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
                 <span className="terms-link">terms and conditions</span>
               </label>
             </div>
-            <button type="submit" className="submit-btn">
-              {activeTab === "user" ? "Create account" : "Create admin account"}
+            <button type="submit" className="submit-btn" disabled={isLoading}>
+              {isLoading
+                ? "Creating account..."
+                : activeTab === "user"
+                ? "Create account"
+                : "Create admin account"}
             </button>
-          </form>
-          <button className="google-signup-btn" onClick={handleGoogleSignUp}>
+          </form>{" "}
+          <div className="divider">
+            <span>or continue with</span>
+          </div>
+          <button
+            type="button"
+            className="google-btn"
+            onClick={handleGoogleSignUp}
+          >
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+            />
             Sign up with Google
           </button>
           <p className="redirect-text">

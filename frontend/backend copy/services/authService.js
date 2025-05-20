@@ -32,31 +32,38 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 const validatePassword = (password) => {
-  return (
-    password.length >= 6 &&
-    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)
-  );
+  if (!password || password.length < 6) {
+    throw new Error("Password must be at least 6 characters long");
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new Error("Password must contain at least one uppercase letter");
+  }
+  if (!/[a-z]/.test(password)) {
+    throw new Error("Password must contain at least one lowercase letter");
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new Error("Password must contain at least one number");
+  }
+  return true;
 };
 
 export const signInWithGoogle = async (role = "user") => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-
-    // Check if user exists in Firestore
     const userDoc = await getDoc(doc(db, "users", user.uid));
 
     if (!userDoc.exists()) {
-      // Create new user profile
       await setDoc(doc(db, "users", user.uid), {
-        fullName: user.displayName,
+        fullName: user.displayName || "",
         email: user.email,
         role,
         createdAt: new Date().toISOString(),
+        emailVerified: true,
       });
+    } else if (userDoc.data().role !== role) {
+      throw new Error(`This account is registered as a ${userDoc.data().role}`);
     }
-
-    const userData = userDoc.exists() ? userDoc.data() : { role };
 
     return {
       success: true,
@@ -64,11 +71,11 @@ export const signInWithGoogle = async (role = "user") => {
         uid: user.uid,
         email: user.email,
         fullName: user.displayName,
-        role: userData.role,
+        role: role,
       },
     };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error.message || "Failed to sign in with Google");
   }
 };
 

@@ -12,6 +12,7 @@ const LoginModal = ({ onClose, switchToSignup }) => {
   const [activeTab, setActiveTab] = useState("user");
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,6 +31,7 @@ const LoginModal = ({ onClose, switchToSignup }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       const response = await signIn(
@@ -51,6 +53,8 @@ const LoginModal = ({ onClose, switchToSignup }) => {
       }
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,7 +64,7 @@ const LoginModal = ({ onClose, switchToSignup }) => {
       if (response.success) {
         alert("Login successful!");
         onClose();
-        navigate(activeTab === "user" ? "/userdashboard" : "/adminboard", {
+        navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
           replace: true,
         });
       }
@@ -181,14 +185,25 @@ const LoginModal = ({ onClose, switchToSignup }) => {
               <span className="forgot-link">Forgot password?</span>
             </div>
             {error && <p className="error-message">{error}</p>}
-            <button type="submit" className="submit-btn">
-              {activeTab === "user" ? "Sign in" : "Admin Sign in"}
-            </button>
+            <button type="submit" className="submit-btn" disabled={isLoading}>
+              {isLoading
+                ? "Signing in..."
+                : activeTab === "user"
+                ? "Sign in"
+                : "Admin Sign in"}
+            </button>{" "}
+            <div className="divider">
+              <span>or continue with</span>
+            </div>
             <button
               type="button"
               onClick={handleGoogleSignIn}
               className="google-btn"
             >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google logo"
+              />
               Sign in with Google
             </button>
           </form>
