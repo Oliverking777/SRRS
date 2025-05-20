@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "../../../backend/services/authService";
+import {
+  signIn,
+  signInWithGoogle,
+} from "../../../backend copy/services/authService";
 
 const LoginModal = ({ onClose, switchToSignup }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
   const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,8 +40,27 @@ const LoginModal = ({ onClose, switchToSignup }) => {
       );
 
       if (response.success) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          onClose();
+          navigate(activeTab === "user" ? "/userdashboard" : "/adminboard", {
+            replace: true,
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const response = await signInWithGoogle(activeTab);
+      if (response.success) {
+        alert("Login successful!");
         onClose();
-        navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
+        navigate(activeTab === "user" ? "/userdashboard" : "/adminboard", {
           replace: true,
         });
       }
@@ -52,8 +75,36 @@ const LoginModal = ({ onClose, switchToSignup }) => {
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
+      {showSuccess && (
+        <div className="success-popup">
+          <div className="success-content">
+            <svg
+              className="checkmark"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 52 52"
+            >
+              <circle
+                className="checkmark__circle"
+                cx="26"
+                cy="26"
+                r="25"
+                fill="none"
+              />
+              <path
+                className="checkmark__check"
+                fill="none"
+                d="M14.1 27.2l7.1 7.2 16.7-16.8"
+              />
+            </svg>
+            <h3>Welcome back!</h3>
+            <p>Login successful. Redirecting...</p>
+          </div>
+        </div>
+      )}
       <div className="modal">
-        <button className="modal-close" onClick={onClose}>×</button>
+        <button className="modal-close" onClick={onClose}>
+          ×
+        </button>
         <div className="auth-container">
           <div className="auth-logo">
             <img src={assets.heart_rate} alt="SRRS Logo" />
@@ -133,9 +184,16 @@ const LoginModal = ({ onClose, switchToSignup }) => {
             <button type="submit" className="submit-btn">
               {activeTab === "user" ? "Sign in" : "Admin Sign in"}
             </button>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="google-btn"
+            >
+              Sign in with Google
+            </button>
           </form>
           <p className="redirect-text">
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <span onClick={switchToSignup} className="redirect-link">
               Sign up
             </span>

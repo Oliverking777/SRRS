@@ -1,222 +1,296 @@
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideIn 0.3s ease;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.modal-close:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.auth-container {
+  padding: 2rem;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.auth-logo h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.auth-container h2 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.auth-container > p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+  border: none;
+  background: none;
+  font-size: 16px;
+}
+
+.tab.active {
+  background-color: #fff;
+  color: #000;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.form-group label {
+  display: block;
+  align-self: self-start;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #7186fa;
+  outline: none;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  color: #444;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkbox-group.terms {
+  margin-bottom: 1.5rem;
+}
+
+.forgot-link,
+.terms-link {
+  color: #7186fa;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forgot-link:hover,
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: #7186fa;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #5b6bd8;
+}
+
+.redirect-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 14px;
+  color: #666;
+}
+
+.redirect-text a {
+  color: #7186fa;
+  text-decoration: none;
+  cursor: pointer;
+}
+.redirect-text span {
+  cursor: pointer;
+}
+
+.redirect-text a:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .modal {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 450px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideIn 0.3s ease;
+  to {
+    opacity: 1;
   }
-  
-  .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #666;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
   }
-  
-  .modal-close:hover {
-    background-color: #f5f5f5;
-    color: #333;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
-  .auth-container {
-    padding: 2rem;
+}
+
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: center;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  stroke-width: 2;
+  stroke: #4bb543;
+  stroke-miterlimit: 10;
+  animation: scale 0.3s ease-in-out;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #4bb543;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
   }
-  
-  .auth-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
   }
-  
-  .auth-logo img {
-    height: 40px;
-    margin-right: 10px;
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
   }
-  
-  .auth-logo h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1a1a1a;
-  }
-  
-  .auth-container h2 {
-    font-size: 20px;
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-  
-  .auth-container > p {
-    text-align: center;
-    color: #666;
-    margin-bottom: 1.5rem;
-  }
-  
-  .tabs {
-    display: flex;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-  }
-  
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px;
-    cursor: pointer;
-    color: #666;
-    transition: all 0.3s ease;
-    border: none;
-    background: none;
-    font-size: 16px;
-  }
-  
-  .tab.active {
-    background-color: #fff;
-    color: #000;
-    font-weight: 500;
-  }
-  
-  .form-group {
-    margin-bottom: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    
-  }
-  
-  .form-group label {
-    display: block;
-    align-self: self-start;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #444;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-  }
-  
-  .form-group input:focus {
-    border-color: #7186fa;
-    outline: none;
-  }
-  
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-  }
-  
-  .checkbox-group input[type="checkbox"] {
-    margin-right: 8px;
-    cursor: pointer;
-  }
-  
-  .checkbox-group label {
-    color: #444;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  
-  .checkbox-group.terms {
-    margin-bottom: 1.5rem;
-  }
-  
-  .forgot-link, .terms-link {
-    color: #7186fa;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .forgot-link:hover, .terms-link:hover {
-    text-decoration: underline;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    background-color: #7186fa;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .submit-btn:hover {
-    background-color: #5b6bd8;
-  }
-  
-  .redirect-text {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .redirect-text a {
-    color: #7186fa;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .redirect-text span{
-    cursor: pointer;
-  }
-  
-  .redirect-text a:hover {
-    text-decoration: underline;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideIn {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
+}
