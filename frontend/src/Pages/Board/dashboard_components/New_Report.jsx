@@ -3,6 +3,16 @@ import './Newreport.css';
 import { illnessTypes, symptoms, severityLevels, commonIllnesses } from '../../../assets/assets';
 import { useData } from '../../../Components/Contextprovider/ContextProvider';
 
+// Define available regions based on what's used in Geo_distri.jsx
+const availableRegions = [
+  { value: "north-region", label: "North Region" },
+  { value: "south-region", label: "South Region" },
+  { value: "east-region", label: "East Region" },
+  { value: "west-region", label: "West Region" },
+  { value: "central-area", label: "Central Area" },
+  { value: "east-area", label: "East Area" }
+];
+
 const New_Report = () => {
   const { addNewReport } = useData();
   const [activeTab, setActiveTab] = useState("basic");
@@ -59,16 +69,21 @@ const New_Report = () => {
       return;
     }
     if (!formData.location) {
-      setError('Please provide a location.');
+      setError('Please select a location.');
       return;
     }
+
+    // Get the location label from the selected value
+    const locationLabel = availableRegions.find(
+      region => region.value === formData.location
+    )?.label || formData.location;
 
     // Prepare report data
     const reportData = {
       illnessType: illnessTypes.find(illness => illness.value === formData.illnessType)?.label || formData.illnessType,
       reportedBy: formData.reportedBy,
       email: formData.email,
-      location: formData.location,
+      location: locationLabel, // Use the label for display consistency
       date: new Date(formData.startDate).toISOString(),
       severity: severityLevels.find(level => level.value === formData.severity)?.label || formData.severity,
       symptoms: formData.symptoms.map(id => symptoms.find(s => s.id === id)?.label).filter(Boolean),
@@ -243,13 +258,19 @@ const New_Report = () => {
                 
                 <div className="form-group">
                   <label>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    placeholder="Enter city, region or area"
-                  />
+                  <div className="select-wrapper">
+                    <select
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select location</option>
+                      {availableRegions.map(region => (
+                        <option key={region.value} value={region.value}>{region.label}</option>
+                      ))}
+                    </select>
+                    <div className="select-arrow"></div>
+                  </div>
                   <p className="helper-text">Where the illness was likely contracted or where you are currently located</p>
                 </div>
                 

@@ -97,6 +97,8 @@ const Adminsetting = () => {
     },
     inactiveTab: {
       color: "#666",
+      borderBottom: "2px solid transparent",
+      
     },
     container: {
       backgroundColor: "#f9fafb",

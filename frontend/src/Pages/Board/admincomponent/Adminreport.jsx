@@ -278,21 +278,7 @@ const Adminreport = () => {
           Monitor and manage health reports submitted by users.
         </p>
 
-        {/* Tabs */}
-        <div style={styles.tabs}>
-          <button style={{ ...styles.tabButton, ...styles.activeTab }}>
-            All Reports
-          </button>
-          <button style={{ ...styles.tabButton, ...styles.inactiveTab }}>
-            Active
-          </button>
-          <button style={{ ...styles.tabButton, ...styles.inactiveTab }}>
-            Resolved
-          </button>
-          <button style={{ ...styles.tabButton, ...styles.inactiveTab }}>
-            Flagged
-          </button>
-        </div>
+        
 
         {/* Stats Grid */}
         <div style={styles.statsGrid}>
