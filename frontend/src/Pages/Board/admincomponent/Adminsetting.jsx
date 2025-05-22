@@ -22,6 +22,21 @@ const Adminsetting = () => {
     maintenanceMode: false,
   });
 
+  // State for Notification toggles
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    smsNotifications: false,
+    newUserRegistrations: true,
+    systemIssues: true,
+    dailyReportSummary: true,
+  });
+
+  // State for Security toggles
+  const [securitySettings, setSecuritySettings] = useState({
+    requireTwoFactor: false,
+    enableIPBlocking: true,
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSiteSettings((prev) => ({
@@ -37,13 +52,29 @@ const Adminsetting = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log("Settings saved:", siteSettings);
+  const handleNotificationToggle = (name) => {
+    setNotificationSettings((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
   };
 
-  //maintainance
+  const handleSecurityToggle = (name) => {
+    setSecuritySettings((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Settings saved:", {
+      siteSettings,
+      notificationSettings,
+      securitySettings,
+    });
+  };
+
   const [backups] = useState([
     {
       date: "July 6, 2025 08:00",
@@ -98,7 +129,6 @@ const Adminsetting = () => {
     inactiveTab: {
       color: "#666",
       borderBottom: "2px solid transparent",
-      
     },
     container: {
       backgroundColor: "#f9fafb",
@@ -126,8 +156,6 @@ const Adminsetting = () => {
       color: "#6b7280",
       marginBottom: "24px",
     },
-
-    //notification style
     notcontainer: {
       padding: "24px",
       backgroundColor: "#ffffff",
@@ -198,6 +226,7 @@ const Adminsetting = () => {
     },
     toggleContainer: {
       position: "relative",
+      cursor: "pointer",
     },
     toggleInput: {
       position: "absolute",
@@ -217,6 +246,7 @@ const Adminsetting = () => {
       borderRadius: "24px",
       backgroundColor: "#3B82F6",
       position: "relative",
+      cursor: "pointer",
     },
     toggleOff: {
       display: "block",
@@ -225,6 +255,7 @@ const Adminsetting = () => {
       borderRadius: "24px",
       backgroundColor: "#D1D5DB",
       position: "relative",
+      cursor: "pointer",
     },
     toggleKnobRight: {
       display: "block",
@@ -298,8 +329,6 @@ const Adminsetting = () => {
       width: "18px",
       height: "18px",
     },
-
-    //security
     seccontainer: {
       backgroundColor: "white",
       padding: "32px",
@@ -358,18 +387,21 @@ const Adminsetting = () => {
     },
     sectoggleContainer: {
       position: "relative",
+      cursor: "pointer",
     },
     toggleBg: {
       width: "48px",
       height: "24px",
       backgroundColor: "#e5e7eb",
       borderRadius: "9999px",
+      cursor: "pointer",
     },
     toggleBgActive: {
       width: "48px",
       height: "24px",
       backgroundColor: "#3b82f6",
       borderRadius: "9999px",
+      cursor: "pointer",
     },
     toggleDot: {
       position: "absolute",
@@ -494,7 +526,6 @@ const Adminsetting = () => {
       background: "none",
       cursor: "pointer",
     },
-    //maintainance
     maincontainer: {
       backgroundColor: "#ffffff",
       padding: "24px",
@@ -757,7 +788,6 @@ const Adminsetting = () => {
           </button>
         </div>
         {activeTab === "system" ? (
-          //system
           <>
             <div
               style={{
@@ -820,7 +850,6 @@ const Adminsetting = () => {
                     marginBottom: "20px",
                   }}
                 >
-                  {/* Site Name */}
                   <div>
                     <label
                       style={{
@@ -858,7 +887,6 @@ const Adminsetting = () => {
                     </p>
                   </div>
 
-                  {/* Administrator Email */}
                   <div>
                     <label
                       style={{
@@ -897,7 +925,6 @@ const Adminsetting = () => {
                   </div>
                 </div>
 
-                {/* Data Retention Period */}
                 <div style={{ marginBottom: "30px" }}>
                   <label
                     style={{
@@ -944,7 +971,6 @@ const Adminsetting = () => {
                   }}
                 />
 
-                {/* The rest of the form remains the same */}
                 <div style={{ marginBottom: "20px" }}>
                   <h2
                     style={{
@@ -1284,7 +1310,6 @@ const Adminsetting = () => {
             </div>
           </>
         ) : activeTab === "notification" ? (
-          //notification
           <>
             <div style={styles.notcontainer}>
               <header style={styles.notheader}>
@@ -1327,10 +1352,16 @@ const Adminsetting = () => {
                       style={styles.toggleInput}
                       type="checkbox"
                       id="email-toggle"
-                      defaultChecked
+                      checked={notificationSettings.emailNotifications}
+                      onChange={() => handleNotificationToggle("emailNotifications")}
                     />
-                    <label style={styles.toggleOn} htmlFor="email-toggle">
-                      <span style={styles.toggleKnobRight}></span>
+                    <label
+                      style={notificationSettings.emailNotifications ? styles.toggleOn : styles.toggleOff}
+                      htmlFor="email-toggle"
+                    >
+                      <span
+                        style={notificationSettings.emailNotifications ? styles.toggleKnobRight : styles.toggleKnobLeft}
+                      ></span>
                     </label>
                   </div>
                 </div>
@@ -1347,9 +1378,16 @@ const Adminsetting = () => {
                       style={styles.toggleInput}
                       type="checkbox"
                       id="sms-toggle"
+                      checked={notificationSettings.smsNotifications}
+                      onChange={() => handleNotificationToggle("smsNotifications")}
                     />
-                    <label style={styles.toggleOff} htmlFor="sms-toggle">
-                      <span style={styles.toggleKnobLeft}></span>
+                    <label
+                      style={notificationSettings.smsNotifications ? styles.toggleOn : styles.toggleOff}
+                      htmlFor="sms-toggle"
+                    >
+                      <span
+                        style={notificationSettings.smsNotifications ? styles.toggleKnobRight : styles.toggleKnobLeft}
+                      ></span>
                     </label>
                   </div>
                 </div>
@@ -1383,10 +1421,16 @@ const Adminsetting = () => {
                       style={styles.toggleInput}
                       type="checkbox"
                       id="reg-toggle"
-                      defaultChecked
+                      checked={notificationSettings.newUserRegistrations}
+                      onChange={() => handleNotificationToggle("newUserRegistrations")}
                     />
-                    <label style={styles.toggleOn} htmlFor="reg-toggle">
-                      <span style={styles.toggleKnobRight}></span>
+                    <label
+                      style={notificationSettings.newUserRegistrations ? styles.toggleOn : styles.toggleOff}
+                      htmlFor="reg-toggle"
+                    >
+                      <span
+                        style={notificationSettings.newUserRegistrations ? styles.toggleKnobRight : styles.toggleKnobLeft}
+                      ></span>
                     </label>
                   </div>
                 </div>
@@ -1403,10 +1447,16 @@ const Adminsetting = () => {
                       style={styles.toggleInput}
                       type="checkbox"
                       id="sys-toggle"
-                      defaultChecked
+                      checked={notificationSettings.systemIssues}
+                      onChange={() => handleNotificationToggle("systemIssues")}
                     />
-                    <label style={styles.toggleOn} htmlFor="sys-toggle">
-                      <span style={styles.toggleKnobRight}></span>
+                    <label
+                      style={notificationSettings.systemIssues ? styles.toggleOn : styles.toggleOff}
+                      htmlFor="sys-toggle"
+                    >
+                      <span
+                        style={notificationSettings.systemIssues ? styles.toggleKnobRight : styles.toggleKnobLeft}
+                      ></span>
                     </label>
                   </div>
                 </div>
@@ -1423,10 +1473,16 @@ const Adminsetting = () => {
                       style={styles.toggleInput}
                       type="checkbox"
                       id="daily-toggle"
-                      defaultChecked
+                      checked={notificationSettings.dailyReportSummary}
+                      onChange={() => handleNotificationToggle("dailyReportSummary")}
                     />
-                    <label style={styles.toggleOn} htmlFor="daily-toggle">
-                      <span style={styles.toggleKnobRight}></span>
+                    <label
+                      style={notificationSettings.dailyReportSummary ? styles.toggleOn : styles.toggleOff}
+                      htmlFor="daily-toggle"
+                    >
+                      <span
+                        style={notificationSettings.dailyReportSummary ? styles.toggleKnobRight : styles.toggleKnobLeft}
+                      ></span>
                     </label>
                   </div>
                 </div>
@@ -1487,7 +1543,6 @@ const Adminsetting = () => {
             </div>
           </>
         ) : activeTab === "security" ? (
-          //security
           <>
             <div style={styles.seccontainer}>
               <div style={styles.headerSection}>
@@ -1524,9 +1579,22 @@ const Adminsetting = () => {
                       Require all users to set up 2FA for their accounts
                     </p>
                   </div>
-                  <div style={styles.toggleContainer}>
-                    <div style={styles.toggleBg}></div>
-                    <div style={styles.toggleDot}></div>
+                  <div style={styles.sectoggleContainer}>
+                    <input
+                      style={styles.toggleInput}
+                      type="checkbox"
+                      id="2fa-toggle"
+                      checked={securitySettings.requireTwoFactor}
+                      onChange={() => handleSecurityToggle("requireTwoFactor")}
+                    />
+                    <label
+                      style={securitySettings.requireTwoFactor ? styles.toggleBgActive : styles.toggleBg}
+                      htmlFor="2fa-toggle"
+                    >
+                      <span
+                        style={securitySettings.requireTwoFactor ? { ...styles.toggleDot, right: "4px" } : { ...styles.toggleDot, left: "4px" }}
+                      ></span>
+                    </label>
                   </div>
                 </div>
 
@@ -1604,8 +1672,21 @@ const Adminsetting = () => {
                     </p>
                   </div>
                   <div style={styles.sectoggleContainer}>
-                    <div style={styles.toggleBgActive}></div>
-                    <div style={styles.toggleDot}></div>
+                    <input
+                      style={styles.toggleInput}
+                      type="checkbox"
+                      id="ip-blocking-toggle"
+                      checked={securitySettings.enableIPBlocking}
+                      onChange={() => handleSecurityToggle("enableIPBlocking")}
+                    />
+                    <label
+                      style={securitySettings.enableIPBlocking ? styles.toggleBgActive : styles.toggleBg}
+                      htmlFor="ip-blocking-toggle"
+                    >
+                      <span
+                        style={securitySettings.enableIPBlocking ? { ...styles.toggleDot, right: "4px" } : { ...styles.toggleDot, left: "4px" }}
+                      ></span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -1712,10 +1793,8 @@ const Adminsetting = () => {
             </div>
           </>
         ) : (
-          // Maintainace
           <>
             <div style={styles.maincontainer}>
-              {/* Backup and Restore Section */}
               <div style={styles.sectionContainer}>
                 <div style={styles.mainheaderFlex}>
                   <HardDrive style={styles.sectionIcon} size={20} />
@@ -1726,7 +1805,6 @@ const Adminsetting = () => {
                 </p>
 
                 <div style={styles.panelsContainer}>
-                  {/* Create Backup Panel */}
                   <div style={styles.panel}>
                     <h3 style={styles.panelTitle}>Create Backup</h3>
                     <p style={styles.panelDescription}>
@@ -1738,7 +1816,6 @@ const Adminsetting = () => {
                     </button>
                   </div>
 
-                  {/* Restore Panel */}
                   <div style={styles.panel}>
                     <h3 style={styles.panelTitle}>Restore from Backup</h3>
                     <p style={styles.panelDescription}>
@@ -1751,7 +1828,6 @@ const Adminsetting = () => {
                   </div>
                 </div>
 
-                {/* Backup List */}
                 <div style={styles.maintableContainer}>
                   <table style={styles.maintable}>
                     <thead style={styles.tableHeader}>
@@ -1787,7 +1863,6 @@ const Adminsetting = () => {
                 </div>
               </div>
 
-              {/* System Status Section */}
               <div style={styles.sectionContainer}>
                 <div style={styles.headerFlex}>
                   <Database style={styles.sectionIcon} size={20} />
@@ -1798,7 +1873,6 @@ const Adminsetting = () => {
                 </p>
 
                 <div style={styles.panelsContainer}>
-                  {/* Resource Usage */}
                   <div style={{ width: "50%" }}>
                     <div style={styles.usageContainer}>
                       <div style={styles.usageHeader}>
@@ -1851,7 +1925,6 @@ const Adminsetting = () => {
                     </button>
                   </div>
 
-                  {/* Service Status */}
                   <div style={{ width: "50%" }}>
                     <div style={styles.serviceCard}>
                       <div>
