@@ -46,7 +46,7 @@ const LoginModal = ({ onClose, switchToSignup }) => {
         setTimeout(() => {
           setShowSuccess(false);
           onClose();
-          navigate(activeTab === "user" ? "/userdashboard" : "/adminboard", {
+          navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
             replace: true,
           });
         }, 2000);
