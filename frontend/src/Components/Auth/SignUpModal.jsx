@@ -3,8 +3,11 @@ import "./Modal.css";
 import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useData } from "../Contextprovider/ContextProvider";
+
 const SignUpModal = ({ onClose, switchToLogin }) => {
   const navigate = useNavigate();
+  const { addNewUser } = useData();
   const [activeTab, setActiveTab] = useState("user");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -15,6 +18,7 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
     agreeToTerms: false
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,15 +31,35 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-    
-    console.log("Signup form submitted:", formData);
-    
+    setError("");
+
+    // Validate form
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (!formData.agreeToTerms) {
+      setError("You must agree to the terms and conditions");
+      return;
+    }
+    if (activeTab === "admin" && !formData.secretKey) {
+      setError("Secret key is required for admin signup");
+      return;
+    }
+
     if (activeTab === "user") {
+      // Add new user to context
+      addNewUser({
+        fullName: formData.fullName,
+        email: formData.email,
+        role: "User",
+      });
+      console.log("User signup submitted:", formData);
       onClose();
       navigate("/userdashboard", { replace: true });
     } else {
+      // Admin signup (unchanged for now)
       console.log("Admin signup - different flow");
-      
     }
   };
 
@@ -56,6 +80,8 @@ const SignUpModal = ({ onClose, switchToLogin }) => {
           </div>
           <h2>Create an account</h2>
           <p>Enter your details to create your account</p>
+          
+          {error && <p className="error-text" style={{ color: "#EF4444", marginBottom: "16px" }}>{error}</p>}
           
           <div className="tabs">
             <button 

@@ -1,20 +1,9 @@
 import React from 'react';
 
-const Dashb = ({ onNavigate }) => {
-  const reportStats = {
-    total: 124,
-    critical: 12,
-    new: 5,
-    resolved: 95
-  };
-  
-  const recentReports = [
-    { id: 1, title: 'Flu Outbreak', status: 'Critical', date: '2024-07-08' },
-    { id: 2, title: 'Food Poisoning', status: 'Warning', date: '2024-07-07' },
-    { id: 3, title: 'COVID-19 Cases', status: 'Normal', date: '2024-07-06' },
-    { id: 4, title: 'New Virus Strain', status: 'Critical', date: '2024-07-05' }
-  ];
+import { useData } from '../../../Components/Contextprovider/ContextProvider';
 
+const Dashb = ({ onNavigate }) => {
+  const { reportStats, recentReports } = useData();
   return (
     <>
       <div className="dashboard-header">
@@ -32,7 +21,6 @@ const Dashb = ({ onNavigate }) => {
             <line x1="12" y1="18" x2="12" y2="12" />
             <line x1="9" y1="15" x2="15" y2="15" />
           </svg>
-          
           New Report
         </button>
       </div>
@@ -42,10 +30,10 @@ const Dashb = ({ onNavigate }) => {
           <div className="stat-info">
             <h3>Total Reports</h3>
             <p>All submitted reports</p>
-            <div className="stat-number">{reportStats.total}</div>
+            <div className="stat-number">{reportStats.total.toLocaleString()}</div>
           </div>
           <div className="progress-bar blue">
-            <div className="progress" style={{ width: '70%' }}></div>
+            <div className="progress" style={{ width: `${Math.min((reportStats.total / 200) * 100, 100)}%` }}></div>
           </div>
         </div>
         
@@ -53,10 +41,10 @@ const Dashb = ({ onNavigate }) => {
           <div className="stat-info">
             <h3>Critical Reports</h3>
             <p>Reports requiring immediate attention</p>
-            <div className="stat-number">{reportStats.critical}</div>
+            <div className="stat-number">{reportStats.critical.toLocaleString()}</div>
           </div>
           <div className="progress-bar red">
-            <div className="progress" style={{ width: '30%' }}></div>
+            <div className="progress" style={{ width: `${Math.min((reportStats.critical / 20) * 100, 100)}%` }}></div>
           </div>
         </div>
         
@@ -64,10 +52,10 @@ const Dashb = ({ onNavigate }) => {
           <div className="stat-info">
             <h3>New Reports Today</h3>
             <p>Reports submitted in the last 24 hours</p>
-            <div className="stat-number">{reportStats.new}</div>
+            <div className="stat-number">{reportStats.new.toLocaleString()}</div>
           </div>
           <div className="progress-bar blue">
-            <div className="progress" style={{ width: '15%' }}></div>
+            <div className="progress" style={{ width: `${Math.min((reportStats.new / 10) * 100, 100)}%` }}></div>
           </div>
         </div>
         
@@ -75,10 +63,10 @@ const Dashb = ({ onNavigate }) => {
           <div className="stat-info">
             <h3>Resolved Reports</h3>
             <p>Reports marked as resolved</p>
-            <div className="stat-number">{reportStats.resolved}</div>
+            <div className="stat-number">{reportStats.resolved.toLocaleString()}</div>
           </div>
           <div className="progress-bar green">
-            <div className="progress" style={{ width: '80%' }}></div>
+            <div className="progress" style={{ width: `${Math.min((reportStats.resolved / 200) * 100, 100)}%` }}></div>
           </div>
         </div>
       </div>

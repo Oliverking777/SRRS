@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   LineChart,
   Line,
@@ -23,63 +22,11 @@ import {
   Activity,
 } from "lucide-react";
 
+import { useData } from "../../../Components/Contextprovider/ContextProvider";
+
 const Admindash = () => {
+  const { reportTrendData, regionData, illnessData, topRegionsData, symptomsData, campaignsData, reportStats, userStats } = useData();
   const [timeframe, setTimeframe] = useState("This Week");
-
-  // Data for Report Submission Trends
-  const reportTrendData = [
-    { name: "Mon", value: 120 },
-    { name: "Tue", value: 160 },
-    { name: "Wed", value: 180 },
-    { name: "Thu", value: 210 },
-    { name: "Fri", value: 280 },
-    { name: "Sat", value: 160 },
-    { name: "Sun", value: 140 },
-  ];
-
-  // Data for Distribution by Region
-  const regionData = [
-    { name: "North Region", value: 35, color: "#4169E1" },
-    { name: "South Region", value: 25, color: "#39A9DB" },
-    { name: "East Region", value: 20, color: "#6B5B95" },
-    { name: "West Region", value: 15, color: "#FF6B8B" },
-    { name: "Central Area", value: 5, color: "#8A2BE2" },
-  ];
-
-  // Data for Illness Trends
-  const illnessData = [
-    { name: "Jan", Respiratory: 380, Gastrointestinal: 240, Viral: 320 },
-    { name: "Feb", Respiratory: 300, Gastrointestinal: 220, Viral: 280 },
-    { name: "Mar", Respiratory: 500, Gastrointestinal: 340, Viral: 220 },
-    { name: "Apr", Respiratory: 450, Gastrointestinal: 260, Viral: 290 },
-    { name: "May", Respiratory: 380, Gastrointestinal: 280, Viral: 230 },
-    { name: "Jun", Respiratory: 410, Gastrointestinal: 320, Viral: 270 },
-    { name: "Jul", Respiratory: 580, Gastrointestinal: 350, Viral: 300 },
-  ];
-
-  // Data for Top Reporting Regions
-  const topRegionsData = [
-    { name: "North Region", value: 34 },
-    { name: "South Region", value: 26 },
-    { name: "East Region", value: 22 },
-    { name: "West Region", value: 18 },
-  ];
-
-  // Data for Most Common Symptoms
-  const symptomsData = [
-    { name: "Fever", value: 64 },
-    { name: "Cough", value: 52 },
-    { name: "Fatigue", value: 38 },
-    { name: "Headache", value: 27 },
-  ];
-
-  // Data for Active Health Campaigns
-  const campaignsData = [
-    { name: "Respiratory Awareness", value: 75 },
-    { name: "Handwashing Initiative", value: 90 },
-    { name: "Vaccination Outreach", value: 60 },
-    { name: "Health Screenings", value: 40 },
-  ];
 
   // Custom styles to match the screenshots
   const styles = {
@@ -442,300 +389,87 @@ const Admindash = () => {
         </div>
 
         {/* Stats Cards */}
-        <div
-          style={{
-            marginTop: "24px",
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "24px",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              borderRadius: "8px",
-              padding: "24px",
-              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <h2
-                style={{
-                  color: "#4B5563",
-                  fontWeight: "500",
-                  fontSize: "16px",
-                  margin: 0,
-                }}
-              >
-                Total Reports
-              </h2>
+        <div style={styles.statsGrid}>
+          <div style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <h2 style={styles.statTitle}>Total Reports</h2>
               <FileText size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p
-                style={{
-                  fontSize: "30px",
-                  fontWeight: "700",
-                  margin: "0",
-                  color: "#111827",
-                }}
-              >
-                16,532
+              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+                {reportStats.total.toLocaleString()}
               </p>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#10B981",
-                  margin: "4px 0 0 0",
-                }}
-              >
+              <p style={{ fontSize: "14px", color: "#10B981", margin: "4px 0 0 0" }}>
                 +18% from last month
               </p>
             </div>
-            <div
-              style={{
-                marginTop: "16px",
-                width: "100%",
-                height: "8px",
-                backgroundColor: "#DBEAFE",
-                borderRadius: "9999px",
-              }}
-            >
+            <div style={styles.progressBar}>
               <div
                 style={{
-                  height: "8px",
-                  width: "75%",
-                  backgroundColor: "#3B82F6",
-                  borderRadius: "9999px",
+                  ...styles.progress,
+                  width: `${Math.min((reportStats.total / 20000) * 100, 100)}%`,
                 }}
               ></div>
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "white",
-              borderRadius: "8px",
-              padding: "24px",
-              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <h2
-                style={{
-                  color: "#4B5563",
-                  fontWeight: "500",
-                  fontSize: "16px",
-                  margin: 0,
-                }}
-              >
-                Active Users
-              </h2>
+          <div style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <h2 style={styles.statTitle}>Active Users</h2>
               <Users size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p
-                style={{
-                  fontSize: "30px",
-                  fontWeight: "700",
-                  margin: "0",
-                  color: "#111827",
-                }}
-              >
-                2,841
+              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+                {userStats.active.toLocaleString()}
               </p>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#10B981",
-                  margin: "4px 0 0 0",
-                }}
-              >
+              <p style={{ fontSize: "14px", color: "#10B981", margin: "4px 0 0 0" }}>
                 +7% from last month
               </p>
             </div>
-            <div
-              style={{
-                marginTop: "16px",
-                width: "100%",
-                height: "8px",
-                backgroundColor: "#DBEAFE",
-                borderRadius: "9999px",
-              }}
-            >
-              <div
-                style={{
-                  height: "8px",
-                  width: "80%",
-                  backgroundColor: "#3B82F6",
-                  borderRadius: "9999px",
-                }}
-              ></div>
+            <div style={styles.progressBar}>
+              <div style={{ ...styles.progress, width: `${Math.min((userStats.active / 5000) * 100, 100)}%` }}></div>
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "white",
-              borderRadius: "8px",
-              padding: "24px",
-              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <h2
-                style={{
-                  color: "#4B5563",
-                  fontWeight: "500",
-                  fontSize: "16px",
-                  margin: 0,
-                }}
-              >
-                Critical Alerts
-              </h2>
+          <div style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <h2 style={styles.statTitle}>Critical Alerts</h2>
               <AlertCircle size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p
-                style={{
-                  fontSize: "30px",
-                  fontWeight: "700",
-                  margin: "0",
-                  color: "#111827",
-                }}
-              >
+              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
                 7
               </p>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#6B7280",
-                  margin: "4px 0 0 0",
-                }}
-              >
+              <p style={{ fontSize: "14px", color: "#6B7280", margin: "4px 0 0 0" }}>
                 Requiring immediate attention
               </p>
             </div>
-            <div
-              style={{
-                marginTop: "16px",
-                width: "100%",
-                height: "8px",
-                backgroundColor: "#DBEAFE",
-                borderRadius: "9999px",
-              }}
-            >
-              <div
-                style={{
-                  height: "8px",
-                  width: "25%",
-                  backgroundColor: "#3B82F6",
-                  borderRadius: "9999px",
-                }}
-              ></div>
+            <div style={styles.progressBar}>
+              <div style={{ ...styles.progress, width: "25%" }}></div>
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "white",
-              borderRadius: "8px",
-              padding: "24px",
-              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <h2
-                style={{
-                  color: "#4B5563",
-                  fontWeight: "500",
-                  fontSize: "16px",
-                  margin: 0,
-                }}
-              >
-                System Health
-              </h2>
+          <div style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <h2 style={styles.statTitle}>System Health</h2>
               <Activity size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p
-                style={{
-                  fontSize: "30px",
-                  fontWeight: "700",
-                  margin: "0",
-                  color: "#111827",
-                }}
-              >
+              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
                 98.6%
               </p>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#6B7280",
-                  margin: "4px 0 0 0",
-                }}
-              >
+              <p style={{ fontSize: "14px", color: "#6B7280", margin: "4px 0 0 0" }}>
                 Uptime in last 30 days
               </p>
             </div>
-            <div
-              style={{
-                marginTop: "16px",
-                width: "100%",
-                height: "8px",
-                backgroundColor: "#DBEAFE",
-                borderRadius: "9999px",
-              }}
-            >
-              <div
-                style={{
-                  height: "8px",
-                  width: "98.6%",
-                  backgroundColor: "#3B82F6",
-                  borderRadius: "9999px",
-                }}
-              ></div>
+            <div style={styles.progressBar}>
+              <div style={{ ...styles.progress, width: "98.6%" }}></div>
             </div>
           </div>
         </div>
 
         {/* Charts Row */}
-        <div
-          style={{
-            
-            marginTop: "24px",
-            display: "flex",
-            gridTemplateColumns: "repeat(1, 1fr)",
-            gap: "24px",
-            "@media (min-width: 100%)": {
-              gridTemplateColumns: "repeat(2, 1fr)",
-            },
-          }}
-        >
+        <div style={styles.chartsGrid}>
           <div style={styles.chartCard}>
             <h2 style={styles.chartTitle}>Report Submission Trends</h2>
             <p style={styles.chartSubtitle}>
@@ -939,21 +673,9 @@ const Admindash = () => {
         </div>
 
         {/* Bottom Stats Row */}
-        <div
-          style={{
-            marginTop: "24px",
-            display: "flex",
-            gridTemplateColumns: "repeat(1, 1fr)",
-            gap: "24px",
-            "@media (min-width: 768px)": {
-              gridTemplateColumns: "repeat(3, 1fr)",
-            },
-          }}
-        >
+        <div style={styles.bottomStatsGrid}>
           <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
+            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
               Top Reporting Regions
             </h2>
             <div style={styles.statsListContainer}>
@@ -976,9 +698,7 @@ const Admindash = () => {
           </div>
 
           <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
+            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
               Most Common Symptoms
             </h2>
             <div style={styles.statsListContainer}>
@@ -1001,9 +721,7 @@ const Admindash = () => {
           </div>
 
           <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
+            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
               Active Health Campaigns
             </h2>
             <div style={styles.statsListContainer}>
