@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "seed": "node seedDatabase.js",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -12,8 +13,12 @@
   "dependencies": {
     "d3-scale": "^4.0.2",
 
+    "firebase": "^11.8.1",
+
+
     "firebase": "^11.7.3",
     "leaflet": "^1.9.4",
+
 
     "lucide-react": "^0.490.0",
     "mapbox-gl": "^3.12.0",
