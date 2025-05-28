@@ -26,9 +26,18 @@ import { useData } from "../../../Components/Contextprovider/ContextProvider";
 
 const Admindash = () => {
   const { reportTrendData, regionData, illnessData, topRegionsData, symptomsData, campaignsData, reportStats, userStats } = useData();
+
+
+  if (!reportTrendData.length || !regionData.length || !reportStats.total) {
+    return <div>No data available. Please check the database or seed data.</div>;
+  }
+
+  if (!reportTrendData.length || !regionData.length || !reportStats.total) {
+    return <div>Loading...</div>;
+  }
+
   const [timeframe, setTimeframe] = useState("This Week");
 
-  // Custom styles to match the screenshots
   const styles = {
     dashboardContainer: {
       minHeight: "100vh",
