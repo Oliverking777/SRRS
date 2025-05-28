@@ -1,20 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Adminboard.css";
 import Admindash from "./admincomponent/Admindash";
 import Adminusers from "./admincomponent/Adminusers";
 import Adminreport from "./admincomponent/Adminreport";
 import Adminsetting from "./admincomponent/Adminsetting";
 import Geo_distri from "./admincomponent/Geo_distri";
+import NotificationPanel from "../../Components/Notifications/NotificationPanel";
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+
+import CustomAlertForm from "../../Components/Notifications/CustomAlertForm";
+import { useNotifications } from "../../hooks/useNotifications";
 
 const Adminboard = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { unreadCount } = useNotifications();
 
   // Handle navigation click
   const handleNavClick = (section) => {
     setActiveSection(section);
+    setShowNotifications(false);
+  };
+
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
   };
 
   return (
@@ -194,7 +204,7 @@ const Adminboard = () => {
           </div>
 
           <div className="profile-section">
-            <div className="notification-bell">
+            <div className="notification-bell" onClick={toggleNotifications}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -207,8 +217,13 @@ const Adminboard = () => {
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
-              <span className="notification-badge">3</span>
+              <span className="notification-badge">{unreadCount}</span>
             </div>
+            {showNotifications && (
+              <div className="notification-dropdown">
+                <NotificationPanel />
+              </div>
+            )}
             <div className="profile-avatar"></div>
           </div>
         </div>
@@ -219,6 +234,7 @@ const Adminboard = () => {
         {activeSection === "Reports" && <Adminreport />}
         {activeSection === "settings" && <Adminsetting />}
         {activeSection === "Geo" && <Geo_distri />}
+        {activeSection === "notifications" && <CustomAlertForm />}
       </div>
     </div>
   );

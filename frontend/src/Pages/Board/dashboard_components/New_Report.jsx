@@ -8,6 +8,7 @@ import {
   severityLevels,
   commonIllnesses,
 } from "../../../assets/assets";
+import { createAutomatedAlert } from "../../../utils/notifications";
 
 const availableRegions = [
   { value: "north-region", label: "North Region" },
@@ -89,7 +90,14 @@ const New_Report = () => {
         createdAt: Timestamp.now(),
       };
 
-      await addDoc(collection(db, "sickness_reports"), reportData);
+      const docRef = await addDoc(
+        collection(db, "sickness_reports"),
+        reportData
+      );
+      const newReport = { id: docRef.id, ...reportData };
+
+      // Create automated notification
+      await createAutomatedAlert(newReport);
       alert("Report submitted successfully!");
 
       setFormData({

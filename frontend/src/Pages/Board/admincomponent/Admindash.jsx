@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useNotifications } from "../../../hooks/useNotifications";
+import NotificationPanel from "../../../Components/Notifications/NotificationPanel";
+import CustomAlertForm from "../../../Components/Notifications/CustomAlertForm";
 import {
   LineChart,
   Line,
@@ -25,11 +28,26 @@ import {
 import { useData } from "../../../Components/Contextprovider/ContextProvider";
 
 const Admindash = () => {
-  const { reportTrendData, regionData, illnessData, topRegionsData, symptomsData, campaignsData, reportStats, userStats } = useData();
-
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showCustomAlert, setShowCustomAlert] = useState(false);
+  const { notifications, unreadCount } = useNotifications();
+  const notificationRef = useRef(null);
+  
+  const {
+    reportTrendData,
+    regionData,
+    illnessData,
+    topRegionsData,
+    symptomsData,
+    campaignsData,
+    reportStats,
+    userStats,
+  } = useData();
 
   if (!reportTrendData.length || !regionData.length || !reportStats.total) {
-    return <div>No data available. Please check the database or seed data.</div>;
+    return (
+      <div>No data available. Please check the database or seed data.</div>
+    );
   }
 
   if (!reportTrendData.length || !regionData.length || !reportStats.total) {
@@ -327,26 +345,60 @@ const Admindash = () => {
         <h1 style={styles.title}>Admin Dashboard</h1>
         <p style={styles.subtitle}>
           Overview of system activity, user reports, and health data analytics.
-        </p>
-
-        <div style={styles.navContainer}>
-          <div
-            style={{
-              marginTop: "24px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div
+        </p>        <div style={styles.navContainer}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div ref={notificationRef} style={{ position: "relative" }}>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                style={{
+                  position: "relative",
+                  padding: "8px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer"
+                }}
+              >
+                <AlertCircle size={24} />
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    background: "#EF4444",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "2px 6px",
+                    fontSize: "12px"
+                  }}>
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              {showNotifications && (
+                <div style={{
+                  position: "absolute",
+                  right: "0",
+                  top: "100%",
+                  marginTop: "8px",
+                  zIndex: 1000
+                }}>
+                  <NotificationPanel />
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setShowCustomAlert(true)}
               style={{
-                display: "flex",
-                alignItems: "center",
-                borderBottom: "1px solid #E5E7EB",
+                padding: "8px 16px",
+                background: "#4169E1",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer"
               }}
             >
-              
-            </div>
+              Create Alert
+            </button>
           </div>
           <div
             style={{
@@ -405,10 +457,23 @@ const Admindash = () => {
               <FileText size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+              <p
+                style={{
+                  fontSize: "30px",
+                  fontWeight: "700",
+                  margin: "0",
+                  color: "#111827",
+                }}
+              >
                 {reportStats.total.toLocaleString()}
               </p>
-              <p style={{ fontSize: "14px", color: "#10B981", margin: "4px 0 0 0" }}>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#10B981",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 +18% from last month
               </p>
             </div>
@@ -428,15 +493,33 @@ const Admindash = () => {
               <Users size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+              <p
+                style={{
+                  fontSize: "30px",
+                  fontWeight: "700",
+                  margin: "0",
+                  color: "#111827",
+                }}
+              >
                 {userStats.active.toLocaleString()}
               </p>
-              <p style={{ fontSize: "14px", color: "#10B981", margin: "4px 0 0 0" }}>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#10B981",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 +7% from last month
               </p>
             </div>
             <div style={styles.progressBar}>
-              <div style={{ ...styles.progress, width: `${Math.min((userStats.active / 5000) * 100, 100)}%` }}></div>
+              <div
+                style={{
+                  ...styles.progress,
+                  width: `${Math.min((userStats.active / 5000) * 100, 100)}%`,
+                }}
+              ></div>
             </div>
           </div>
 
@@ -446,10 +529,23 @@ const Admindash = () => {
               <AlertCircle size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+              <p
+                style={{
+                  fontSize: "30px",
+                  fontWeight: "700",
+                  margin: "0",
+                  color: "#111827",
+                }}
+              >
                 7
               </p>
-              <p style={{ fontSize: "14px", color: "#6B7280", margin: "4px 0 0 0" }}>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#6B7280",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 Requiring immediate attention
               </p>
             </div>
@@ -464,10 +560,23 @@ const Admindash = () => {
               <Activity size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
-              <p style={{ fontSize: "30px", fontWeight: "700", margin: "0", color: "#111827" }}>
+              <p
+                style={{
+                  fontSize: "30px",
+                  fontWeight: "700",
+                  margin: "0",
+                  color: "#111827",
+                }}
+              >
                 98.6%
               </p>
-              <p style={{ fontSize: "14px", color: "#6B7280", margin: "4px 0 0 0" }}>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#6B7280",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 Uptime in last 30 days
               </p>
             </div>
@@ -684,7 +793,9 @@ const Admindash = () => {
         {/* Bottom Stats Row */}
         <div style={styles.bottomStatsGrid}>
           <div style={styles.chartCard}>
-            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
+            <h2
+              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
+            >
               Top Reporting Regions
             </h2>
             <div style={styles.statsListContainer}>
@@ -707,7 +818,9 @@ const Admindash = () => {
           </div>
 
           <div style={styles.chartCard}>
-            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
+            <h2
+              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
+            >
               Most Common Symptoms
             </h2>
             <div style={styles.statsListContainer}>
@@ -730,7 +843,9 @@ const Admindash = () => {
           </div>
 
           <div style={styles.chartCard}>
-            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}>
+            <h2
+              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
+            >
               Active Health Campaigns
             </h2>
             <div style={styles.statsListContainer}>
@@ -756,8 +871,47 @@ const Admindash = () => {
               ))}
             </div>
           </div>
+        </div>      </div>
+      
+      {showCustomAlert && (
+        <div style={{
+          position: "fixed",
+          top: "0",
+          left: "0",
+          right: "0",
+          bottom: "0",
+          background: "rgba(0,0,0,0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: "8px",
+            padding: "24px",
+            maxWidth: "500px",
+            width: "100%",
+            position: "relative"
+          }}>
+            <button
+              onClick={() => setShowCustomAlert(false)}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "none",
+                border: "none",
+                fontSize: "20px",
+                cursor: "pointer"
+              }}
+            >
+              ×
+            </button>
+            <CustomAlertForm onClose={() => setShowCustomAlert(false)} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

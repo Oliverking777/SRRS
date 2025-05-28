@@ -1,16 +1,13 @@
 import "./App.css";
-
-import Home from "./Pages/Home/Home";
-
+import React from "react";
+import AppProviders from "./Components/Providers/AppProviders";
 
 
 function App() {
-  
   return (
-    <div className="App">
-      <Home/>
-      
-    </div>
+    <AppProviders>
+      <Routes />
+    </AppProviders>
   );
 }
 
