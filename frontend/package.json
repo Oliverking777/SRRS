@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "d3-scale": "^4.0.2",
 
     "firebase": "^11.8.1",

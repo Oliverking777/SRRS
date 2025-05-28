@@ -1,55 +1,114 @@
 import React, { useState } from "react";
 import "./Modal.css";
 import { assets } from "../../assets/assets";
-import { Link, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import {
+  signIn,
+  signInWithGoogle,
+} from "../../../backend copy/services/authService";
 
 const LoginModal = ({ onClose, switchToSignup }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
+  const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     secretKey: "",
-    rememberMe: false
+    rememberMe: false,
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    
-    console.log("Login form submitted:", formData);
-    
-    if (activeTab === "user") {
-      onClose();
-      navigate("/userdashboard", { replace: true });
-    } else {
-      console.log("Admin login - different flow");
-      // For admin route handling
-      onClose();
-      navigate("/admindashboard", { replace: true });
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await signIn(
+        formData.email,
+        formData.password,
+        activeTab,
+        formData.secretKey
+      );
+
+      if (response.success) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          onClose();
+          navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
+            replace: true,
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const response = await signInWithGoogle(activeTab);
+      if (response.success) {
+        alert("Login successful!");
+        onClose();
+        navigate(activeTab === "user" ? "/userdashboard" : "/admindashboard", {
+          replace: true,
+        });
+      }
+    } catch (error) {
+      setError(error.message);
     }
   };
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
+      {showSuccess && (
+        <div className="success-popup">
+          <div className="success-content">
+            <svg
+              className="checkmark"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 52 52"
+            >
+              <circle
+                className="checkmark__circle"
+                cx="26"
+                cy="26"
+                r="25"
+                fill="none"
+              />
+              <path
+                className="checkmark__check"
+                fill="none"
+                d="M14.1 27.2l7.1 7.2 16.7-16.8"
+              />
+            </svg>
+            <h3>Welcome back!</h3>
+            <p>Login successful. Redirecting...</p>
+          </div>
+        </div>
+      )}
       <div className="modal">
-        <button className="modal-close" onClick={onClose}>×</button>
+        <button className="modal-close" onClick={onClose}>
+          ×
+        </button>
         <div className="auth-container">
           <div className="auth-logo">
             <img src={assets.heart_rate} alt="SRRS Logo" />
@@ -57,22 +116,22 @@ const LoginModal = ({ onClose, switchToSignup }) => {
           </div>
           <h2>Welcome back</h2>
           <p>Enter your credentials to sign in to your account</p>
-          
+
           <div className="tabs">
-            <button 
+            <button
               className={`tab ${activeTab === "user" ? "active" : ""}`}
               onClick={() => setActiveTab("user")}
             >
               User
             </button>
-            <button 
+            <button
               className={`tab ${activeTab === "admin" ? "active" : ""}`}
               onClick={() => setActiveTab("admin")}
             >
               Admin
             </button>
           </div>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="email">Email</label>
@@ -86,7 +145,6 @@ const LoginModal = ({ onClose, switchToSignup }) => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
@@ -99,7 +157,6 @@ const LoginModal = ({ onClose, switchToSignup }) => {
                 required
               />
             </div>
-            
             {activeTab === "admin" && (
               <div className="form-group">
                 <label htmlFor="secretKey">Secret Key</label>
@@ -114,7 +171,6 @@ const LoginModal = ({ onClose, switchToSignup }) => {
                 />
               </div>
             )}
-            
             <div className="form-row">
               <div className="checkbox-group">
                 <input
@@ -128,16 +184,34 @@ const LoginModal = ({ onClose, switchToSignup }) => {
               </div>
               <span className="forgot-link">Forgot password?</span>
             </div>
-            
-            {activeTab === "user" ? (
-              <button type="submit" className="submit-btn">Sign in</button>
-            ) : (
-              <button type="submit" className="submit-btn">Admin Sign in</button>
-            )}
+            {error && <p className="error-message">{error}</p>}
+            <button type="submit" className="submit-btn" disabled={isLoading}>
+              {isLoading
+                ? "Signing in..."
+                : activeTab === "user"
+                ? "Sign in"
+                : "Admin Sign in"}
+            </button>{" "}
+            <div className="divider">
+              <span>or continue with</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="google-btn"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google logo"
+              />
+              Sign in with Google
+            </button>
           </form>
-          
           <p className="redirect-text">
-            Don't have an account? <span onClick={switchToSignup} className="redirect-link">Sign up</span>
+            Don't have an account?{" "}
+            <span onClick={switchToSignup} className="redirect-link">
+              Sign up
+            </span>
           </p>
         </div>
       </div>
