@@ -1,7 +1,4 @@
-import React, { useState, useRef } from "react";
-import { useNotifications } from "../../../hooks/useNotifications";
-import NotificationPanel from "../../../Components/Notifications/NotificationPanel";
-import CustomAlertForm from "../../../Components/Notifications/CustomAlertForm";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -17,44 +14,35 @@ import {
   Bar,
   Legend,
 } from "recharts";
-import {
-  RefreshCw,
-  AlertCircle,
-  Users,
-  FileText,
-  Activity,
-} from "lucide-react";
-
+import { AlertCircle, Users, FileText, Activity } from "lucide-react";
 import { useData } from "../../../Components/Contextprovider/ContextProvider";
+import NotificationPanel from "../../../Components/Notifications/NotificationPanel";
+
+import "./Admindash.css";
+import { useNotifications } from "../../../hooks/useNotifications";
+import CustomAlertForm from "../../../Components/Notifications/CustomAlertForm";
 
 const Admindash = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showCustomAlert, setShowCustomAlert] = useState(false);
-  const { notifications, unreadCount } = useNotifications();
-  const notificationRef = useRef(null);
-  
+  const { notifications } = useNotifications();
   const {
-    reportTrendData,
-    regionData,
-    illnessData,
-    topRegionsData,
-    symptomsData,
-    campaignsData,
-    reportStats,
-    userStats,
+    loading,
+    error,
+    reportStats = { total: 0, critical: 0, new: 0, resolved: 0 },
+    userStats = { total: 0, active: 0, newRegistrations: 0, healthcare: 0 },
+    reportTrendData = [],
+    regionData = [],
+    illnessData = [],
   } = useData();
 
-  if (!reportTrendData.length || !regionData.length || !reportStats.total) {
-    return (
-      <div>No data available. Please check the database or seed data.</div>
-    );
+  if (loading) {
+    return <div className="loading">Loading dashboard data...</div>;
   }
 
-  if (!reportTrendData.length || !regionData.length || !reportStats.total) {
-    return <div>Loading...</div>;
+  if (error) {
+    return <div className="error">Error: {error}</div>;
   }
-
-  const [timeframe, setTimeframe] = useState("This Week");
 
   const styles = {
     dashboardContainer: {
@@ -126,6 +114,43 @@ const Admindash = () => {
       gap: "24px",
     },
     statCard: {
+      backgroundColor: "white",
+      borderRadius: "8px",
+      padding: "24px",
+      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    },
+    notificationSection: {
+      position: "relative",
+    },
+    notificationButton: {
+      padding: "8px",
+      borderRadius: "6px",
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    notificationBadge: {
+      position: "absolute",
+      top: "-4px",
+      right: "-4px",
+      backgroundColor: "#EF4444",
+      color: "white",
+      borderRadius: "9999px",
+      padding: "2px 6px",
+      fontSize: "12px",
+    },
+    notificationDropdown: {
+      position: "absolute",
+      top: "100%",
+      right: "0",
+      marginTop: "8px",
+      zIndex: 1000,
+    },
+    customAlertContainer: {
+      marginTop: "16px",
       backgroundColor: "white",
       borderRadius: "8px",
       padding: "24px",
@@ -311,143 +336,69 @@ const Admindash = () => {
       borderRadius: "6px",
       fontSize: "14px",
     },
-    bottomStatsGrid: {
-      marginTop: "24px",
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: "24px",
-    },
-    statsListContainer: {
-      marginTop: "16px",
+    topActions: {
       display: "flex",
-      flexDirection: "column",
-      gap: "16px",
-    },
-    statsListItem: {
-      marginBottom: "16px",
-    },
-    statsListHeader: {
-      display: "flex",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "flex-end",
+      gap: "16px",
+      marginTop: "24px",
     },
-    statsListItemName: {
-      color: "#374151",
-    },
-    statsListItemValue: {
-      color: "#6B7280",
+    createAlertButton: {
+      padding: "8px 16px",
+      backgroundColor: "#3B82F6",
+      color: "white",
+      borderRadius: "6px",
+      fontSize: "14px",
+      border: "none",
+      cursor: "pointer",
     },
   };
 
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+    setShowCustomAlert(false);
+  };
+
+  const toggleCustomAlert = () => {
+    setShowCustomAlert(!showCustomAlert);
+    setShowNotifications(false);
+  };
+
   return (
-    <div style={styles.dashboardContainer}>
-      <div style={styles.content}>
-        <h1 style={styles.title}>Admin Dashboard</h1>
-        <p style={styles.subtitle}>
-          Overview of system activity, user reports, and health data analytics.
-        </p>        <div style={styles.navContainer}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div ref={notificationRef} style={{ position: "relative" }}>
+    <div className="dashboard-container">
+      <div className="content">
+        <div className="top-section">
+          <h1 className="title">Admin Dashboard</h1>
+          <div className="actions">
+            <div className="notification-section">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                style={{
-                  position: "relative",
-                  padding: "8px",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer"
-                }}
+                onClick={toggleNotifications}
+                className="notification-button"
               >
-                <AlertCircle size={24} />
-                {unreadCount > 0 && (
-                  <span style={{
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    background: "#EF4444",
-                    color: "white",
-                    borderRadius: "50%",
-                    padding: "2px 6px",
-                    fontSize: "12px"
-                  }}>
-                    {unreadCount}
+                <AlertCircle size={20} />
+                {notifications.length > 0 && (
+                  <span className="notification-badge">
+                    {notifications.length}
                   </span>
                 )}
               </button>
               {showNotifications && (
-                <div style={{
-                  position: "absolute",
-                  right: "0",
-                  top: "100%",
-                  marginTop: "8px",
-                  zIndex: 1000
-                }}>
+                <div className="notification-dropdown">
                   <NotificationPanel />
                 </div>
               )}
             </div>
-            <button
-              onClick={() => setShowCustomAlert(true)}
-              style={{
-                padding: "8px 16px",
-                background: "#4169E1",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
-              Create Alert
-            </button>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-              }}
-            >
-              <select
-                style={{
-                  appearance: "none",
-                  backgroundColor: "white",
-                  border: "1px solid #D1D5DB",
-                  borderRadius: "6px",
-                  padding: "8px 12px",
-                  paddingRight: "36px",
-                  color: "#374151",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                }}
-                value={timeframe}
-                onChange={(e) => setTimeframe(e.target.value)}
-              >
-                <option>This Week</option>
-                <option>This Month</option>
-                <option>This Year</option>
-              </select>
-            </div>
-            <button
-              style={{
-                padding: "8px",
-                borderRadius: "6px",
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <RefreshCw size={20} color="#6B7280" />
+            <button onClick={toggleCustomAlert} className="create-alert-button">
+              Create Custom Alert
             </button>
           </div>
         </div>
+
+        {showCustomAlert && (
+          <div className="custom-alert-container">
+            <CustomAlertForm />
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div style={styles.statsGrid}>
@@ -457,6 +408,7 @@ const Admindash = () => {
               <FileText size={20} color="#6B7280" />
             </div>
             <div style={{ marginTop: "8px" }}>
+              {" "}
               <p
                 style={{
                   fontSize: "30px",
@@ -465,7 +417,7 @@ const Admindash = () => {
                   color: "#111827",
                 }}
               >
-                {reportStats.total.toLocaleString()}
+                {(reportStats?.total || 0).toLocaleString()}
               </p>
               <p
                 style={{
@@ -474,7 +426,7 @@ const Admindash = () => {
                   margin: "4px 0 0 0",
                 }}
               >
-                +18% from last month
+                {reportStats?.new || 0} new today
               </p>
             </div>
             <div style={styles.progressBar}>
@@ -611,7 +563,7 @@ const Admindash = () => {
                     dot={false}
                     activeDot={{ r: 8 }}
                     fill="url(#colorUv)"
-                  />
+                  />{" "}
                   <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#4169E1" stopOpacity={0.8} />
@@ -636,19 +588,24 @@ const Admindash = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={regionData}
+                    data={regionData || []}
                     cx="50%"
                     cy="50%"
                     labelLine={true}
                     label={({ name, percent }) =>
-                      `${name}: ${(percent * 100).toFixed(0)}%`
+                      `${name || "Unknown"}: ${((percent || 0) * 100).toFixed(
+                        0
+                      )}%`
                     }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {regionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {(regionData || []).map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry?.color || "#8884d8"}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -790,128 +747,38 @@ const Admindash = () => {
           </div>
         </div>
 
-        {/* Bottom Stats Row */}
-        <div style={styles.bottomStatsGrid}>
-          <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
-              Top Reporting Regions
-            </h2>
-            <div style={styles.statsListContainer}>
-              {topRegionsData.map((region, index) => (
-                <div key={index} style={styles.statsListItem}>
-                  <div style={styles.statsListHeader}>
-                    <span style={styles.statsListItemName}>{region.name}</span>
-                    <span style={styles.statsListItemValue}>
-                      {region.value}%
-                    </span>
-                  </div>
-                  <div style={{ ...styles.progressBar, marginTop: "4px" }}>
-                    <div
-                      style={{ ...styles.progress, width: `${region.value}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
-              Most Common Symptoms
-            </h2>
-            <div style={styles.statsListContainer}>
-              {symptomsData.map((symptom, index) => (
-                <div key={index} style={styles.statsListItem}>
-                  <div style={styles.statsListHeader}>
-                    <span style={styles.statsListItemName}>{symptom.name}</span>
-                    <span style={styles.statsListItemValue}>
-                      {symptom.value}%
-                    </span>
-                  </div>
-                  <div style={{ ...styles.progressBar, marginTop: "4px" }}>
-                    <div
-                      style={{ ...styles.progress, width: `${symptom.value}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={styles.chartCard}>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "700", color: "#1F2937" }}
-            >
-              Active Health Campaigns
-            </h2>
-            <div style={styles.statsListContainer}>
-              {campaignsData.map((campaign, index) => (
-                <div key={index} style={styles.statsListItem}>
-                  <div style={styles.statsListHeader}>
-                    <span style={styles.statsListItemName}>
-                      {campaign.name}
-                    </span>
-                    <span style={styles.statsListItemValue}>
-                      {campaign.value}%
-                    </span>
-                  </div>
-                  <div style={{ ...styles.progressBar, marginTop: "4px" }}>
-                    <div
-                      style={{
-                        ...styles.progress,
-                        width: `${campaign.value}%`,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>      </div>
-      
-      {showCustomAlert && (
-        <div style={{
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          bottom: "0",
-          background: "rgba(0,0,0,0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: "white",
-            borderRadius: "8px",
-            padding: "24px",
-            maxWidth: "500px",
-            width: "100%",
-            position: "relative"
-          }}>
+        {/* Top Actions */}
+        <div style={styles.topActions}>
+          <div
+            className="notification-section"
+            style={styles.notificationSection}
+          >
             <button
-              onClick={() => setShowCustomAlert(false)}
-              style={{
-                position: "absolute",
-                top: "16px",
-                right: "16px",
-                background: "none",
-                border: "none",
-                fontSize: "20px",
-                cursor: "pointer"
-              }}
+              onClick={toggleNotifications}
+              style={styles.notificationButton}
             >
-              ×
+              <AlertCircle size={20} />
+              <span style={styles.notificationBadge}>
+                {notifications.length}
+              </span>
             </button>
-            <CustomAlertForm onClose={() => setShowCustomAlert(false)} />
+            {showNotifications && (
+              <div style={styles.notificationDropdown}>
+                <NotificationPanel />
+              </div>
+            )}
           </div>
+          <button onClick={toggleCustomAlert} style={styles.createAlertButton}>
+            Create Custom Alert
+          </button>
         </div>
-      )}
+
+        {showCustomAlert && (
+          <div style={styles.customAlertContainer}>
+            <CustomAlertForm />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

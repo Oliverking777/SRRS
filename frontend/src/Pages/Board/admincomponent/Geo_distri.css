@@ -224,3 +224,124 @@
     height: 300px;
   }
 }
+
+.geo-distribution {
+  display: flex;
+  gap: 24px;
+  height: calc(100vh - 100px);
+  padding: 20px;
+}
+
+.map-container {
+  flex: 1;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location-list {
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location-items {
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+}
+
+.location-item {
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8f9fa;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.location-item:hover {
+  background: #f1f3f5;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.location-name {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.density-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.density-badge.high {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.density-badge.medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.density-badge.low {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.location-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.marker {
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  transition: transform 0.2s;
+}
+
+.marker:hover {
+  transform: scale(1.1);
+}
+
+.popup {
+  padding: 12px;
+}
+
+.popup h3 {
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.popup-content {
+  font-size: 0.875rem;
+}
+
+.popup-content p {
+  margin: 4px 0;
+}
+
+.popup-content ul {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.popup-content li {
+  margin: 2px 0;
+}

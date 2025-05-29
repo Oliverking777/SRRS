@@ -1,302 +1,133 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { db } from "../../../../firebase";
-import {
-  collection,
-  getDocs,
-  setDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase.js";
 
-const fallbackReports = [
-  {
-    id: 1,
-    type: "Respiratory Infection",
-    reportedBy: "Olivia Martin",
-    email: "olivia.martin@example.com",
-    location: "North Region",
-    date: "2025-07-06",
-    severity: "Moderate",
-    status: "Active",
-  },
-];
-
-const DataContext = createContext();
+export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [reports, setReports] = useState([]);
-  const [recentReports, setRecentReports] = useState([]);
   const [users, setUsers] = useState([]);
-  const [reportTrendData, setReportTrendData] = useState([]);
-  const [regionData, setRegionData] = useState([]);
-  const [illnessData, setIllnessData] = useState([]);
-  const [topRegionsData, setTopRegionsData] = useState([]);
-  const [symptomsData, setSymptomsData] = useState([]);
-  const [campaignsData, setCampaignsData] = useState([]);
-  const [trendData, setTrendData] = useState([]);
-  const [adminRegionData, setAdminRegionData] = useState([]);
-  const [severityData, setSeverityData] = useState([]);
-  const [illnessDataAdmin, setIllnessDataAdmin] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const assets = {};
-  const feature_list = [];
-  const illnessTypes = [
-    "Respiratory Infection",
-    "Gastrointestinal Illness",
-    "Viral Infection",
-    "Allergic Reaction",
-    "Bacterial Infection",
-    "Food Poisoning",
-  ];
-  const symptoms = ["Fever", "Cough", "Fatigue", "Nausea", "Diarrhea", "Rash"];
-  const severityLevels = ["Mild", "Moderate", "Severe", "Critical"];
-  const commonIllnesses = ["Flu", "Food Poisoning", "COVID-19", "Allergies"];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Query sickness_reports collection instead of reports
+        const reportsQuery = query(
+          collection(db, "sickness_reports"),
+          orderBy("createdAt", "desc")
+        );
 
+        const usersQuery = query(
+          collection(db, "users"),
+          orderBy("createdAt", "desc")
+        );
+
+        const unsubscribeReports = onSnapshot(reportsQuery, (snapshot) => {
+          const reportsList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            date: doc.data().createdAt?.toDate().toLocaleDateString(),
+          }));
+          setReports(reportsList);
+        });
+
+        const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+          const usersList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setUsers(usersList);
+        });
+
+        setLoading(false);
+        return () => {
+          unsubscribeReports();
+          unsubscribeUsers();
+        };
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Calculate report stats
   const reportStats = {
     total: reports.length,
     critical: reports.filter((r) => r.severity === "Critical").length,
     new: reports.filter((r) => {
-      const reportDate = new Date(r.date);
+      if (!r.createdAt) return false;
+      const reportDate = r.createdAt.toDate
+        ? r.createdAt.toDate()
+        : new Date(r.createdAt);
       const today = new Date();
-      return (
-        reportDate.getFullYear() === today.getFullYear() &&
-        reportDate.getMonth() === today.getMonth() &&
-        reportDate.getDate() === today.getDate()
-      );
+      return reportDate.toDateString() === today.toDateString();
     }).length,
     resolved: reports.filter((r) => r.status === "Resolved").length,
   };
 
-  // Compute userStats dynamically from users
-  const userStats = {
-    total: users.length,
-    active: users.filter((u) => u.status === "Active").length,
-    newRegistrations: users.filter((u) => {
-      const lastActive = new Date(u.lastActive);
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return lastActive >= thirtyDaysAgo;
-    }).length,
-    healthcare: users.filter((u) => u.role === "Healthcare").length,
-  };
-
-  // Fetch data from Firestore with real-time updates
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    // Real-time listener for reports
-    const unsubscribeReports = onSnapshot(
-      collection(db, "reports"),
-      (snapshot) => {
-        const reportsList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setReports(reportsList.length ? reportsList : fallbackReports);
-
-        // Update recentReports based on latest reports
-        const recent = reportsList
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, 4)
-          .map((report) => ({
-            id: report.id,
-            title: `${report.type} Report`,
-            status:
-              report.severity === "Severe"
-                ? "Critical"
-                : report.severity === "Moderate"
-                ? "Warning"
-                : "Normal",
-            date: report.date,
-          }));
-        setRecentReports(recent);
-      },
-      (err) => {
-        console.error("Error fetching reports:", err);
-        setError("Failed to fetch reports");
-        setReports(fallbackReports);
-      }
-    );
-
-    // Real-time listener for users
-    const unsubscribeUsers = onSnapshot(
-      collection(db, "users"),
-      (snapshot) => {
-        const usersList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setUsers(usersList);
-      },
-      (err) => {
-        console.error("Error fetching users:", err);
-        setError("Failed to fetch users");
-      }
-    );
-
-    // Fetch other collections (single fetch for static-like data)
-    const fetchStaticData = async () => {
-      try {
-        // Trends
-        const trendsSnapshot = await getDocs(collection(db, "trends"));
-        trendsSnapshot.forEach((doc) => {
-          if (doc.id === "report_trend_weekly")
-            setReportTrendData(doc.data().data || []);
-          if (doc.id === "admin_trend") setTrendData(doc.data().data || []);
-        });
-
-        // Regions
-        const regionsSnapshot = await getDocs(collection(db, "regions"));
-        regionsSnapshot.forEach((doc) => {
-          if (doc.id === "region_data") setRegionData(doc.data().data || []);
-          if (doc.id === "top_regions")
-            setTopRegionsData(doc.data().data || []);
-          if (doc.id === "admin_region_data")
-            setAdminRegionData(doc.data().data || []);
-        });
-
-        // Illnesses
-        const illnessesSnapshot = await getDocs(collection(db, "illnesses"));
-        illnessesSnapshot.forEach((doc) => {
-          if (doc.id === "illness_data") setIllnessData(doc.data().data || []);
-          if (doc.id === "illness_data_admin")
-            setIllnessDataAdmin(doc.data().data || []);
-        });
-
-        // Symptoms
-        const symptomsSnapshot = await getDocs(collection(db, "symptoms"));
-        symptomsSnapshot.forEach((doc) => {
-          if (doc.id === "symptoms_data")
-            setSymptomsData(doc.data().data || []);
-        });
-
-        // Campaigns
-        const campaignsSnapshot = await getDocs(collection(db, "campaigns"));
-        campaignsSnapshot.forEach((doc) => {
-          if (doc.id === "campaigns_data")
-            setCampaignsData(doc.data().data || []);
-        });
-
-        // Severity
-        const severitySnapshot = await getDocs(collection(db, "severity"));
-        severitySnapshot.forEach((doc) => {
-          if (doc.id === "severity_data")
-            setSeverityData(doc.data().data || []);
-        });
-
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching static data:", err);
-        setError("Failed to fetch data");
-        setLoading(false);
-      }
-    };
-
-    fetchStaticData();
-
-    // Cleanup listeners on unmount
-    return () => {
-      unsubscribeReports();
-      unsubscribeUsers();
-    };
+  // Calculate region data
+  const regionData = reports.reduce((acc, report) => {
+    const region = report.location || "Unknown";
+    const existing = acc.find((item) => item.region === region);
+    if (existing) {
+      existing.active += report.status === "Active" ? 1 : 0;
+      existing.resolved += report.status === "Resolved" ? 1 : 0;
+      existing[report.severity.toLowerCase()] =
+        (existing[report.severity.toLowerCase()] || 0) + 1;
+      existing.total += 1;
+    } else {
+      acc.push({
+        region,
+        active: report.status === "Active" ? 1 : 0,
+        resolved: report.status === "Resolved" ? 1 : 0,
+        mild: report.severity === "Mild" ? 1 : 0,
+        moderate: report.severity === "Moderate" ? 1 : 0,
+        severe: report.severity === "Severe" ? 1 : 0,
+        critical: report.severity === "Critical" ? 1 : 0,
+        total: 1,
+      });
+    }
+    return acc;
   }, []);
 
-  // Function to add a new report
-  const addNewReport = async (newReport) => {
-    try {
-      const reportId = `report_${Date.now()}`; // Unique ID based on timestamp
-      let formattedDate = newReport.date;
-      if (formattedDate.includes("T")) {
-        formattedDate = formattedDate.split("T")[0]; // Format as YYYY-MM-DD
-      }
-
-      const formattedReport = {
-        id: reportId,
-        type: newReport.illnessType,
-        reportedBy: newReport.reportedBy || "Anonymous",
-        email: newReport.email || "anonymous@example.com",
-        location: newReport.location,
-        date: formattedDate,
-        severity: newReport.severity,
-        status: "Active",
-        symptoms: newReport.symptoms || [],
-        otherSymptoms: newReport.otherSymptoms || "",
-        description: newReport.description || "",
-        contactInfected: newReport.contactInfected || false,
-        travel: newReport.travel || false,
-        medicalAttention: newReport.medicalAttention || false,
-        coordinates: newReport.coordinates || [3.866667, 11.516667], // Default to Yaoundé
-      };
-
-      // Save to Firestore
-      await setDoc(doc(db, "reports", reportId), formattedReport);
-      // Note: onSnapshot will automatically update the reports state
-    } catch (error) {
-      console.error("Error adding new report:", error);
-      setError("Failed to add report");
+  // Calculate illness data
+  const illnessData = reports.reduce((acc, report) => {
+    const illnessType = report.illnessType || "Unknown";
+    const existing = acc.find((item) => item.name === illnessType);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({
+        name: illnessType,
+        value: 1,
+        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      });
     }
-  };
+    return acc;
+  }, []);
 
-  // Function to add a new user
-  const addNewUser = async (newUser) => {
-    try {
-      const userId = `user_${Date.now()}`; // Unique ID based on timestamp
-      const formattedUser = {
-        id: userId,
-        name: newUser.fullName,
-        email: newUser.email,
-        role: newUser.role || "User",
-        status: "Active",
-        reports: 0,
-        lastActive: new Date().toISOString().split("T")[0],
-        location: newUser.location || "Unknown",
-      };
-
-      // Save to Firestore
-      await setDoc(doc(db, "users", userId), formattedUser);
-      // Note: onSnapshot will automatically update the users state
-    } catch (error) {
-      console.error("Error adding new user:", error);
-      setError("Failed to add user");
-    }
-  };
-
-  // Context value
-  const data = {
-    assets,
-    feature_list,
-    illnessTypes,
-    symptoms,
-    severityLevels,
-    commonIllnesses,
-    reportStats,
-    userStats,
-    recentReports,
-    reportTrendData,
-    regionData,
-    illnessData,
-    topRegionsData,
-    symptomsData,
-    campaignsData,
-    users,
-    reports,
-    trendData,
-    adminRegionData,
-    severityData,
-    illnessDataAdmin,
-    addNewReport,
-    addNewUser,
-    loading,
-    error,
-  };
-
-  return <DataContext.Provider value={data}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider
+      value={{
+        reports,
+        users,
+        loading,
+        error,
+        reportStats,
+        regionData,
+        illnessData,
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  );
 };
 
-// Custom hook to use the context
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {

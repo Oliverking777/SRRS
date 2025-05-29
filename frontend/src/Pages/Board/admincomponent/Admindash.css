@@ -72,3 +72,153 @@
     transform: translateY(0);
   }
 }
+
+.dashboard-container {
+  padding: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-numbers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.stat-label {
+  display: block;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.stat-value.critical {
+  color: #dc2626;
+}
+.stat-value.new {
+  color: #2563eb;
+}
+.stat-value.resolved {
+  color: #059669;
+}
+.stat-value.active {
+  color: #2563eb;
+}
+.stat-value.healthcare {
+  color: #7c3aed;
+}
+
+.recent-activity {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.list {
+  margin-top: 16px;
+}
+
+.list-item {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-left: 3px solid #e5e7eb;
+}
+
+.list-item.critical {
+  border-left-color: #dc2626;
+}
+.list-item.high {
+  border-left-color: #dc2626;
+}
+.list-item.medium {
+  border-left-color: #f59e0b;
+}
+.list-item.low {
+  border-left-color: #059669;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.severity,
+.role {
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.severity.critical,
+.severity.high {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.severity.medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.severity.low {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.role.healthcare {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.role.user {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.date {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.error {
+  color: #dc2626;
+  padding: 16px;
+  background: #fee2e2;
+  border-radius: 6px;
+  margin: 16px 0;
+}
