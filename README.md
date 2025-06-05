@@ -38,6 +38,16 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 - **Visualization**: Chart.js / D3.js / Leaflet.js (for maps)
 
 ---
+## 📝 API Documentation
+
+### 📍 Endpoints
+
+| Method | Endpoint                  | Description                        |
+|--------|---------------------------|------------------------------------|
+| POST   | `/api/cases`              | Submit a new sickness case         |
+| GET    | `/api/cases?region=NY`    | Filter sickness cases by region    |
+| GET    | `/api/analytics`          | Retrieve sickness outbreak trends  |
+
 
 ## 📈 Example Use Case
 
