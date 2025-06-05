@@ -66,6 +66,17 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 - 📱 Mobile app version for on-the-go reporting  
 
 ---
+## 🙌 Contributing
+
+| Step | Command / Action                              | Description                                |
+|------|-----------------------------------------------|--------------------------------------------|
+| 1️⃣   | 🍴 Fork the repository                        | Make your own copy of the project          |
+| 2️⃣   | `git checkout -b feature/amazing-feature`    | Create a new feature branch                |
+| 3️⃣   | `git commit -m "Add some amazing feature"`   | Commit your changes with a descriptive message |
+| 4️⃣   | `git push origin feature/amazing-feature`    | Push your branch to GitHub                 |
+| 5️⃣   | 🔁 Open a Pull Request                       | Submit your changes for review             |
+
+
 
 ## 🚀 Project Goals
 
