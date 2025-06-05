@@ -48,3 +48,16 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 5. A report is generated and exported as PDF for public health briefings.
 
 ---
+## 🧩 Future Enhancements
+
+- 📍 GPS-based sickness heatmaps  
+- 🔔 Real-time notification system for outbreaks  
+- 🤖 AI-based prediction of potential health crises  
+- 📱 Mobile app version for on-the-go reporting  
+
+---
+
+## 🚀 Project Goals
+
+To reduce response times and improve public health outcomes by leveraging **technology, real-time data**, and **collaboration between stakeholders**.
+
