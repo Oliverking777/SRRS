@@ -29,5 +29,14 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 - 🧑‍💼 **Admins** – to manage users, regions, and data flows
 
 ---
+## 🌐 Technology Stack (Suggested)
+
+- **Frontend**: React.js / Vue.js + Tailwind CSS  
+- **Backend**: Node.js /   
+- **Database**: Firebase 
+- **Authentication**: Firebase Auth / JWT  
+- **Visualization**: Chart.js / D3.js / Leaflet.js (for maps)
+
+---
 
 
