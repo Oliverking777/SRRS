@@ -39,4 +39,12 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 
 ---
 
+## 📈 Example Use Case
 
+1. A nurse logs in and records several flu cases in a local clinic.
+2. The system geo-tags the report and adds it to the regional database.
+3. Admins are notified of the trend, and graphs update in real time.
+4. Researchers filter data to analyze frequency spikes over months.
+5. A report is generated and exported as PDF for public health briefings.
+
+---
