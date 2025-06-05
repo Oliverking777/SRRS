@@ -78,7 +78,7 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 
 
 
-## 🚀 Project Goals
+## Project Goals
 
 To reduce response times and improve public health outcomes by leveraging **technology, real-time data**, and **collaboration between stakeholders**.
 
