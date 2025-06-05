@@ -22,6 +22,12 @@ It empowers **healthcare professionals**, **researchers**, and **administrators*
 - ✅ Provide admin oversight and exportable reports  
 
 ---
+## 🧑‍💻 Target Users
 
+- 🧑‍⚕️ **Healthcare Professionals** – to submit and review cases  
+- 🔬 **Researchers** – to analyze sickness patterns and trends  
+- 🧑‍💼 **Admins** – to manage users, regions, and data flows
+
+---
 
 
