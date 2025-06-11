@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY frontend/package*.json ./
 
-# Install dependencies with clean install and only production deps
-RUN npm ci --only=production
+# Install all dependencies
+RUN npm ci
 
 # Copy project files
 COPY frontend .
