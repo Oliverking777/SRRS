@@ -2,8 +2,7 @@
 
 ## 📌 Project Overview
 
-The **Sickness Recorder and Reporter** is a **web-based application** developed to efficiently **record, monitor, and analyze sickness trends** across various regions.
-
+The **Sickness Recorder and Reporter ** is a ** web-based application ** designed to record and track sicknesses in different regions. The system aims to provide a centralized platform for data collection, analysis, and reporting, enabling healthcare professionals, researchers, and admins to make informed decisions.
 This platform serves as a **centralized hub** for:
 
 - 📊 **Data Collection**
