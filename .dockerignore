@@ -11,3 +11,9 @@ README.md
 coverage
 .eslintcache
 *.log
+.vscode
+
+# Don't ignore firebase config files
+!firebase.js
+!src/firebase.js
+!frontend/src/firebase.js

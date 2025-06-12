@@ -1,14 +1,26 @@
 # Build stage
-FROM node:18-alpine AS build
+FROM ubuntu:jammy AS build
 
 # Set working directory
 WORKDIR /app
 
+# Install Node.js and build dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    python3 \
+    make \
+    g++ \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY frontend/package*.json ./
 
-# Install all dependencies
-RUN npm ci
+# Clean npm cache and install dependencies
+RUN npm cache clean --force
+RUN rm -rf package-lock.json node_modules
+RUN npm install
 
 # Copy project files
 COPY frontend .
@@ -17,7 +29,7 @@ COPY frontend .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:1.24.0-alpine
 
 # Install curl for health check
 RUN apk --no-cache add curl

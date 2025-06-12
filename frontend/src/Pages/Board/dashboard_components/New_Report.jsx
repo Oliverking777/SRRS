@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "../../../../../firebase";
+
 import "./Newreport.css";
 import {
   illnessTypes,
@@ -9,6 +9,7 @@ import {
   commonIllnesses,
 } from "../../../assets/assets";
 import { createAutomatedAlert } from "../../../utils/notifications";
+import { db } from "../../../firebase";
 
 const availableRegions = [
   { value: "north-region", label: "North Region" },

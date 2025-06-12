@@ -9,8 +9,8 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../firebase";
 import { NotificationsContext } from "../../contexts/NotificationsContext";
+import { db } from "../../../../firebase";
 
 export const NotificationsProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);

@@ -8,8 +8,9 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../../../firebase";
+
 import "./NotificationPanel.css";
+import { db } from "../../firebase";
 
 const NotificationPanel = () => {
   const [notifications, setNotifications] = useState([]);
