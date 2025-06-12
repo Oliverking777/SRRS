@@ -12,3 +12,11 @@ We welcome contributions from developers, researchers, and health-tech enthusias
    ```bash
    git clone https://github.com/YOUR-USERNAME/SRRS.git
    cd SRRS
+2. **Install Dependencies**
+
+```bash
+npm install
+
+
+
+
