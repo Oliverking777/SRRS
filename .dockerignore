@@ -1,0 +1,19 @@
+node_modules
+npm-debug.log
+build
+dist
+.git
+.gitignore
+README.md
+.env
+.env.local
+.nyc_output
+coverage
+.eslintcache
+*.log
+.vscode
+
+# Don't ignore firebase config files
+!firebase.js
+!src/firebase.js
+!frontend/src/firebase.js

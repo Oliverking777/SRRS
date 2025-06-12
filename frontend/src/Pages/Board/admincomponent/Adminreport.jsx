@@ -17,29 +17,60 @@ import {
 import { useData } from "../../../Components/Contextprovider/ContextProvider";
 
 const Adminreport = () => {
-  const { reports, trendData, adminRegionData, severityData, illnessDataAdmin, reportStats } = useData();
+  const { reports, regionData, illnessData, reportStats, loading } = useData();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
+  const handleStatusFilter = (status) => {
+    setStatusFilter(status);
+    setIsStatusDropdownOpen(false);
+  };
+
+  if (loading) {
+    return <div style={styles.loading}>Loading report data...</div>;
+  }
+
+  // Transform data for charts
+  const trendData = reports
+    .reduce((acc, report) => {
+      const date = report.createdAt?.toDate().toLocaleDateString() || "Unknown";
+      const existing = acc.find((item) => item.date === date);
+      if (existing) {
+        existing.newReports += 1;
+        if (report.status === "Resolved") existing.resolvedCases += 1;
+      } else {
+        acc.push({
+          date,
+          newReports: 1,
+          resolvedCases: report.status === "Resolved" ? 1 : 0,
+        });
+      }
+      return acc;
+    }, [])
+    .slice(-7);
+
+  const adminRegionData = regionData.map((region) => ({
+    region: region.region,
+    active: region.active,
+    resolved: region.resolved,
+  }));
+
+  const severityData = regionData;
+
+  const illnessDataAdmin = illnessData;
+
   // Get unique statuses for filter
-  const statuses = [...new Set(reports.map(report => report.status))];
+  const statuses = [...new Set(reports.map((report) => report.status))];
 
   // Filter reports based on search term and status
-  const filteredReports = reports.filter(report => {
+  const filteredReports = reports.filter((report) => {
     const matchesSearch =
-      report.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.location.toLowerCase().includes(searchTerm.toLowerCase());
+      report.illnessType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.location?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter ? report.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
-
-  // Handle status filter
-  const handleStatusFilter = (status) => {
-    setStatusFilter(status === statusFilter ? "" : status);
-    setIsStatusDropdownOpen(false);
-  };
 
   const styles = {
     container: {
@@ -278,34 +309,50 @@ const Adminreport = () => {
           Monitor and manage health reports submitted by users.
         </p>
 
-        
-
         {/* Stats Grid */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={styles.statLabel}>Total Reports</div>
-            <div style={styles.statValue}>{reportStats.total.toLocaleString()}</div>
+            <div style={styles.statValue}>
+              {reportStats.total.toLocaleString()}
+            </div>
             <div style={{ ...styles.statSubtext, color: "#16a34a" }}>
               +18% from last month
             </div>
           </div>
           <div style={styles.statCard}>
             <div style={styles.statLabel}>Active Reports</div>
-            <div style={styles.statValue}>{reports.filter(r => r.status === 'Active').length.toLocaleString()}</div>
+            <div style={styles.statValue}>
+              {reports
+                .filter((r) => r.status === "Active")
+                .length.toLocaleString()}
+            </div>
             <div style={styles.statSubtext}>
-              {((reports.filter(r => r.status === 'Active').length / reportStats.total) * 100).toFixed(1)}% of total reports
+              {(
+                (reports.filter((r) => r.status === "Active").length /
+                  reportStats.total) *
+                100
+              ).toFixed(1)}
+              % of total reports
             </div>
           </div>
           <div style={styles.statCard}>
             <div style={styles.statLabel}>Resolved Reports</div>
-            <div style={styles.statValue}>{reportStats.resolved.toLocaleString()}</div>
+            <div style={styles.statValue}>
+              {reportStats.resolved.toLocaleString()}
+            </div>
             <div style={styles.statSubtext}>
-              {((reportStats.resolved / reportStats.total) * 100).toFixed(1)}% of total reports
+              {((reportStats.resolved / reportStats.total) * 100).toFixed(1)}%
+              of total reports
             </div>
           </div>
           <div style={styles.statCard}>
             <div style={styles.statLabel}>Flagged Reports</div>
-            <div style={styles.statValue}>{reports.filter(r => r.status === 'Flagged').length.toLocaleString()}</div>
+            <div style={styles.statValue}>
+              {reports
+                .filter((r) => r.status === "Flagged")
+                .length.toLocaleString()}
+            </div>
             <div style={styles.statSubtext}>Requiring review</div>
           </div>
         </div>
@@ -314,7 +361,9 @@ const Adminreport = () => {
         <div style={styles.statsGrid}>
           <div style={styles.chartCard}>
             <h2 style={styles.chartTitle}>Report Trends</h2>
-            <p style={styles.chartSubtitle}>Weekly report submissions and resolutions</p>
+            <p style={styles.chartSubtitle}>
+              Weekly report submissions and resolutions
+            </p>
             <div style={styles.chartContainer}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -346,7 +395,9 @@ const Adminreport = () => {
           </div>
           <div style={styles.chartCard}>
             <h2 style={styles.chartTitle}>Reports by Region</h2>
-            <p style={styles.chartSubtitle}>Active and resolved cases by region</p>
+            <p style={styles.chartSubtitle}>
+              Active and resolved cases by region
+            </p>
             <div style={styles.chartContainer}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -370,7 +421,9 @@ const Adminreport = () => {
         <div style={styles.statsGrid}>
           <div style={styles.chartCard}>
             <h2 style={styles.chartTitle}>Severity Distribution</h2>
-            <p style={styles.chartSubtitle}>Breakdown of report severity by region</p>
+            <p style={styles.chartSubtitle}>
+              Breakdown of report severity by region
+            </p>
             <div style={{ overflowX: "auto" }}>
               <table style={styles.table}>
                 <thead>
@@ -400,7 +453,9 @@ const Adminreport = () => {
           </div>
           <div style={styles.chartCard}>
             <h2 style={styles.chartTitle}>Illness Distribution</h2>
-            <p style={styles.chartSubtitle}>Percentage of illness types reported</p>
+            <p style={styles.chartSubtitle}>
+              Percentage of illness types reported
+            </p>
             <div style={styles.chartContainer}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -449,12 +504,13 @@ const Adminreport = () => {
               </button>
               {isStatusDropdownOpen && (
                 <div style={styles.dropdownMenu}>
-                  {statuses.map(status => (
+                  {statuses.map((status) => (
                     <button
                       key={status}
                       style={{
                         ...styles.dropdownItem,
-                        backgroundColor: statusFilter === status ? "#eff6ff" : "transparent",
+                        backgroundColor:
+                          statusFilter === status ? "#eff6ff" : "transparent",
                         color: statusFilter === status ? "#2563eb" : "#374151",
                       }}
                       onClick={() => handleStatusFilter(status)}
@@ -492,23 +548,39 @@ const Adminreport = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredReports.map(report => (
+                {filteredReports.map((report) => (
                   <tr key={report.id} style={styles.tableRow}>
                     <td style={styles.tableCell}>{report.type}</td>
                     <td style={styles.tableCell}>
                       <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontWeight: "500" }}>{report.reportedBy}</span>
-                        <span style={{ color: "#6b7280", fontSize: "12px" }}>{report.email}</span>
+                        <span style={{ fontWeight: "500" }}>
+                          {report.reportedBy}
+                        </span>
+                        <span style={{ color: "#6b7280", fontSize: "12px" }}>
+                          {report.email}
+                        </span>
                       </div>
                     </td>
                     <td style={styles.tableCell}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
                         <MapPin size={14} color="#6b7280" />
                         {report.location}
                       </div>
                     </td>
                     <td style={styles.tableCell}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
                         <Calendar size={14} color="#6b7280" />
                         {report.date}
                       </div>

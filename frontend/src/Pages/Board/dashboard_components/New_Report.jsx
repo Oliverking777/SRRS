@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "../../../../../firebase";
+
 import "./Newreport.css";
 import {
   illnessTypes,
@@ -8,6 +8,8 @@ import {
   severityLevels,
   commonIllnesses,
 } from "../../../assets/assets";
+import { createAutomatedAlert } from "../../../utils/notifications";
+import { db } from "../../../firebase";
 
 const availableRegions = [
   { value: "north-region", label: "North Region" },
@@ -89,7 +91,14 @@ const New_Report = () => {
         createdAt: Timestamp.now(),
       };
 
-      await addDoc(collection(db, "sickness_reports"), reportData);
+      const docRef = await addDoc(
+        collection(db, "sickness_reports"),
+        reportData
+      );
+      const newReport = { id: docRef.id, ...reportData };
+
+      // Create automated notification
+      await createAutomatedAlert(newReport);
       alert("Report submitted successfully!");
 
       setFormData({
