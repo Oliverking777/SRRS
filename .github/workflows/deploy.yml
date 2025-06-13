@@ -14,6 +14,15 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
+      - name: 🔍 Debug Secrets Availability
+        run: |
+          if [ -n "${{ secrets.VPS_HOST }}" ]; then
+            echo "✅ VPS_HOST is set"
+          else
+            echo "❌ VPS_HOST is missing"
+            exit 1
+          fi
+
       - name: 🔍 Check Repository
         run: |
           if [ ! -f "Dockerfile" ]; then
@@ -24,9 +33,9 @@ jobs:
       - name: 📡 Connect & Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
             echo "🔄 Preparing deployment environment..."
@@ -45,10 +54,15 @@ jobs:
             fi
 
             echo "📂 Navigating to project directory..."
-            cd ~/srrs-new/srrs || mkdir -p ~/srrs-new/srrs
+            mkdir -p ~/srrs-new/srrs
+            cd ~/srrs-new/srrs
 
             echo "🔄 Pulling latest code..."
-            git pull origin davidmbah || git clone https://github.com/your-username/srrs.git .
+            if [ -d .git ]; then
+              git pull origin davidmbah
+            else
+              git clone https://github.com/${{ github.repository }}.git .
+            fi
 
             echo "🛑 Stopping old containers..."
             docker-compose down || true
@@ -58,6 +72,9 @@ jobs:
 
             echo "🚀 Building and starting new containers..."
             docker-compose up --build -d
+
+            echo "⏳ Waiting for containers to start..."
+            sleep 10
 
             echo "✅ Deployment complete! Verifying services..."
             docker-compose ps
