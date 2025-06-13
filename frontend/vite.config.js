@@ -12,34 +12,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
-      firebase: resolve(__dirname, "./node_modules/firebase"),
-    },
-  },
-  build: {
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true,
-    },
-    rollupOptions: {
-      external: [
-        "firebase/app",
-        "firebase/firestore",
-        "firebase/auth",
-        "firebase/storage",
-      ],
-      output: {
-        globals: {
-          "firebase/app": "firebase",
-          "firebase/firestore": "firebase.firestore",
-          "firebase/auth": "firebase.auth",
-          "firebase/storage": "firebase.storage",
-        },
-        manualChunks: (id) => {
-          if (id.includes("node_modules/firebase")) {
-            return "firebase";
-          }
-        },
-      },
     },
   },
   optimizeDeps: {
