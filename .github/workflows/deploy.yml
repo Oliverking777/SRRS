@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            echo "🔄 Preparing deployment..."
+            echo "🔄 Preparing deployments..."
 
             cd ~/srrs-new/srrs || mkdir -p ~/srrs-new/srrs
 
