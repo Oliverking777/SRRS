@@ -17,7 +17,7 @@ jobs:
       - name: 🔍 Debug Secrets Availability
         run: |
           if [ -n "${{ secrets.VPS_HOST }}" ]; then
-            echo "✅ VPS_HOST is set and working"
+            echo "✅ VPS_HOST is set and deployed"
           else
             echo "❌ VPS_HOST is missing"
             exit 1
