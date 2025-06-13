@@ -14,22 +14,6 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🔍 Debug Secrets Availability
-        run: |
-          if [ -n "${{ secrets.VPS_HOST }}" ]; then
-            echo "✅ VPS_HOST is set"
-          else
-            echo "❌ VPS_HOST is missing"
-            exit 1
-          fi
-
-      - name: 🔍 Check Repository
-        run: |
-          if [ ! -f "Dockerfile" ]; then
-            echo "❌ Dockerfile not found!"
-            exit 1
-          fi
-
       - name: 📡 Connect & Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -39,49 +23,19 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             set -e
-            echo "🔄 Preparing deployment environment.gg.."
+            echo "🔄 Preparing deployment..."
 
-            # Install Docker if needed
-            if ! command -v docker &> /dev/null; then
-              echo "🔧 Installing Docker..."
-              curl -fsSL https://get.docker.com -o get-docker.sh
-              sudo sh get-docker.sh
-            fi
+            cd ~/srrs-new/srrs || mkdir -p ~/srrs-new/srrs
 
-            # Install Docker Compose if needed
-            if ! command -v docker-compose &> /dev/null; then
-              echo "🔧 Installing Docker Compose..."
-              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-            fi
-
-            # Prepare project directory
-            echo "📂 Setting up project directory..."
-            mkdir -p ~/srrs-new/srrs
-            cd ~/srrs-new/srrs
-
-            # Clone or pull latest code
+            # Update or clone repository
             if [ -d .git ]; then
-              echo "🔄 Pulling latest changes..."
               git pull origin davidmbah
             else
-              echo "🔄 Cloning repository..."
               git clone https://github.com/${{ github.repository }}.git .
             fi
 
-            # Deploy application
-            echo "🚀 Deploying application..."
-            docker-compose down --remove-orphans || true
-            docker system prune -f --volumes
+            # Deploy with Docker
+            docker-compose down || true
             docker-compose up --build -d
 
-            # Verify deployment
-            echo "✅ Verifying deployment..."
-            sleep 10
-            if ! docker-compose ps --services --filter "status=running" | grep -q .; then
-              echo "❌ Deployment failed - no containers running!"
-              docker-compose logs
-              exit 1
-            fi
-
-            echo "✨ Deployment successful!"
+            echo "✨ Deployment complete!"
