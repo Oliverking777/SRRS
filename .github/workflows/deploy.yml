@@ -16,10 +16,10 @@ jobs:
 
       - name: 🔍 Debug Secrets Availability
         run: |
-          if [ -n "${{ secrets.HOST }}" ]; then
-            echo "✅ HOST is set"
+          if [ -n "${{ secrets.VPS_HOST }}" ]; then
+            echo "✅ VPS_HOST is set"
           else
-            echo "❌ HOST is missing"
+            echo "❌ VPS_HOST is missing"
             exit 1
           fi
 
@@ -33,9 +33,9 @@ jobs:
       - name: 📡 Connect & Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             set -e
