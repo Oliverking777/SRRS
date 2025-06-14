@@ -1,0 +1,1 @@
+The Sickness Recorder and Reporter is a web-based application designed to record and track sicknesses in different regions. The system aims to provide a centralized platform for data collection, analysis, and reporting, enabling healthcare professionals, researchers, and admins to make informed decisions.
