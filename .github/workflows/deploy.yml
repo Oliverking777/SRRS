@@ -1,0 +1,40 @@
+name: 🚀 Deploy SRRS on Push
+
+on:
+  push:
+    branches:
+      - davidmbah
+
+jobs:
+  deploy:
+    name: 🐳 Build & Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 📡 Connect & Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            echo "🔄 Preparing deployment..."
+
+            cd ~/srrs-new/srrs || mkdir -p ~/srrs-new/srrs
+
+            # Update or clone repository
+            if [ -d .git ]; then
+              git pull origin davidmbah
+            else
+              git clone https://github.com/${{ github.repository }}.git .
+            fi
+
+            # Deploy with Docker
+            docker-compose down || true
+            docker-compose up --build -d
+
+            echo "✨ Deployment complete!"

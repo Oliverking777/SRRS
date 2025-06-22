@@ -7,7 +7,7 @@ const Footer = () => {
     <div className="Footer">
       <div className="left_footer">
         <img src={assets.heart_rate} alt="" />
-        <p> © 2025 SRRS. All rights reserved.</p>
+        <p> © 2025 SRRS. All rights reserved  davidmbah.</p>
       </div>
       <div className="right_footer">
         <a href="" className='pr'>Privacy Policy</a>
