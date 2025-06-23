@@ -20,7 +20,7 @@ const Footer = () => {
         <a href="#" className="term" aria-label="Terms of Service">
           Terms of Service
         </a>
-        <a href="#" className="contact" aria-label="Contact">
+        <a href="#" className="contact us" aria-label="Contact">
           Contact
         </a>
       </div>
