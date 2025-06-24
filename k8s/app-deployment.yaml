@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srrs-frontend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: srrs-frontend
+  template:
+    metadata:
+      labels:
+        app: srrs-frontend
+    spec:
+      containers:
+        - name: srrs-frontend
+          image: srrs-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: srrs-frontend-service
+  namespace: production
+spec:
+  selector:
+    app: srrs-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
