@@ -1,71 +1,80 @@
-.Footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100px; 
-    color: #908d8e ;
-    font-size: 14px;
-    padding-left: 300px;
-    padding-right: 300px;
+.Footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+  color: #7b7b8b;
+  font-size: 15px;
+  padding: 0 8vw;
+  background: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 1px 8px 0 rgba(65, 105, 225, 0.03);
+  position: relative;
+  z-index: 2;
 }
-.left_footer{
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.left_footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.left_footer p{
-    font-size: 15px;
+.left_footer p {
+  font-size: 15px;
+  margin: 0;
+  color: #7b7b8b;
 }
-.left_footer img{
-    height: 30px;
-    width: 30px;
+.left_footer img {
+  height: 28px;
+  width: 28px;
+  filter: grayscale(0.2);
 }
-.right_footer a{
-    color: #908d8e ;
-    text-decoration: none;
-    
-    
+.right_footer {
+  display: flex;
+  gap: 18px;
 }
-.right_footer{
-    display: flex;
-    gap: 10px;
+.right_footer a {
+  color: #7b7b8b;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  transition: background 0.18s, color 0.18s;
 }
-.right_footer a:hover{
-    color: #908d8e ;
-    text-decoration: underline;
+.right_footer a:hover {
+  color: #4169e1;
+  background: #e9eefd;
+  text-decoration: none;
 }
 @media screen and (max-width: 1024px) {
-    .Footer {
-        padding: 0 50px;
-    }
+  .Footer {
+    padding: 0 4vw;
+  }
 }
-
 @media screen and (max-width: 768px) {
-    .Footer {
-        flex-direction: column;
-        height: auto;
-        padding: 20px;
-        gap: 15px;
-    }
-    
-    .left_footer {
-        justify-content: center;
-    }
-    
-    .right_footer {
-        justify-content: center;
-    }
+  .Footer {
+    flex-direction: column;
+    min-height: 100px;
+    padding: 18px 2vw;
+    gap: 10px;
+    text-align: center;
+  }
+  .left_footer,
+  .right_footer {
+    justify-content: center;
+    width: 100%;
+  }
 }
-
 @media screen and (max-width: 480px) {
-    .left_footer {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .right_footer {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
+  .Footer {
+    padding: 12px 2vw;
+    font-size: 13px;
+  }
+  .left_footer {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .right_footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
 }
